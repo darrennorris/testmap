@@ -12,12 +12,6 @@ is dataframe with 215849 points and 13 fields, including:
 \item{subbasn}{Name of subbasn.}
 \item{geometry}{sf geometry. Decimal degrees.}
 }
-
-#' @references
-Norris, D., et. al. (2019).
-Prospects for freshwater turtle population recovery are catalyzed
-by pan-Amazonian community-based management.
-Biological Conservation, 233, https://doi.org/10.1016/j.biocon.2019.02.022.
 }
 \source{
 \url{https://github.com/darrennorris/TACAR}
@@ -43,5 +37,11 @@ A lot of points along rivers.
 # convert to sf object
 sf_points_bau <- sf::st_as_sf(points_bau)
 }
+}
+\references{
+Norris, D., et. al. (2019).
+Prospects for freshwater turtle population recovery are catalyzed
+by pan-Amazonian community-based management.
+Biological Conservation, 233, https://doi.org/10.1016/j.biocon.2019.02.022.
 }
 \keyword{datasets}

@@ -21,7 +21,7 @@
 #'   \item{geometry}{sf geometry. Decimal degrees.}
 #' }
 #'
-#' #' @references
+#' @references
 #' Norris, D., et. al. (2019).
 #' Prospects for freshwater turtle population recovery are catalyzed
 #' by pan-Amazonian community-based management.

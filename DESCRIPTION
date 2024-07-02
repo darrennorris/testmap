@@ -14,9 +14,11 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 Depends: 
-    R (>= 2.10)
+    R (>= 2.10),
+    tidyverse
 LazyData: true
 Imports: 
+    leaflet,
     sf
 URL: https://github.com/darrennorris/testmap, https://darrennorris.github.io/testmap/
 BugReports: https://github.com/darrennorris/testmap/issues

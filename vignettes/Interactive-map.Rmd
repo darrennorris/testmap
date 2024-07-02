@@ -17,3 +17,22 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(testmap)
 ```
+
+
+```{r load-packages, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(leaflet)
+library(sf)
+```
+
+Use the interactive map to check population changes.
+```{r make-map}
+orinoco <- points_bau |> 
+  filter(BASIN_N == "Orinoco") |> st_as_sf() |> st_transform(4326)
+# colour palette
+leaflet::leaflet(data = orinoco) |> 
+  addTiles() |>
+  addCircles()
+  
+```
+
