@@ -29,10 +29,28 @@ Use the interactive map to check population changes.
 ```{r make-map}
 orinoco <- points_bau |> 
   filter(BASIN_N == "Orinoco") |> st_as_sf() |> st_transform(4326)
+orinocolow <- orinoco
 # colour palette
+pal <- colorFactor(
+  palette = c("#7274C1", "#A3720E"),
+  domain = orinoco$flag_50_42y
+)
+ 
+# interactive map
 leaflet::leaflet(data = orinoco) |> 
   addTiles() |>
-  addCircles()
+  addCircleMarkers(color = ~pal(flag_50_42y), 
+             stroke = FALSE, fillOpacity = 0.4, 
+clusterOptions = markerClusterOptions(), 
+group = "orinoco"
+) |>                        
+  groupOptions("orinoco", zoomLevels = 1:10) |> 
+  addCircles(data = orinocolow, 
+             color = ~pal(flag_50_42y), 
+group = "orinocolow"
+) |>                        
+  groupOptions("orinocolow", zoomLevels = 11:15)
+
   
 ```
 
