@@ -44,12 +44,12 @@ leaflet::leaflet(data = orinoco) |>
 clusterOptions = markerClusterOptions(), 
 group = "orinoco"
 ) |>                        
-  groupOptions("orinoco", zoomLevels = 1:10) |> 
+  groupOptions("orinoco", zoomLevels = 1:8) |> 
   addCircles(data = orinocolow, 
              color = ~pal(flag_50_42y), 
 group = "orinocolow"
 ) |>                        
-  groupOptions("orinocolow", zoomLevels = 11:15)
+  groupOptions("orinocolow", zoomLevels = 9:15)
 
   
 ```
