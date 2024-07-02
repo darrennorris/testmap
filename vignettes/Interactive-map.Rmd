@@ -28,7 +28,9 @@ library(sf)
 Use the interactive map to check population changes.
 ```{r make-map}
 points_bau4326 <- points_bau |> 
-  dplyr::filter(BASIN_N == "Orinoco") |> st_as_sf() |> st_transform(4326)
+  #filter(BASIN_N == "Orinoco") |>
+  arrange(BASIN_N, SUBBASI, BB_ID, REACH_ID) |> 
+  filter(row_number() %% 5 == 1) |> st_as_sf() |> st_transform(4326)
 points_bau4326_low <- points_bau4326
 # colour palette
 pal <- colorFactor(
