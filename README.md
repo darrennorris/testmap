@@ -4,16 +4,29 @@
 # testmap
 
 <!-- badges: start -->
+
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![pkgdown](https://github.com/darrennorris/testmap/workflows/pkgdown/badge.svg)](https://github.com/darrennorris/eprdados/actions)
+[![R-CMD-check](https://github.com/darrennorris/testmap/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/darrennorris/testmap/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of testmap is to …
+The goal of testmap is to present projected future population changes of
+**Podocnemis unifilis**.
+
+Maps of the projected future changes can be found online.
+
+- 3 generation.  
+  Predicted changes after 42 years:
+  <https://darrennorris.github.io/testmap/articles/Interactive-map.html>
 
 ## Installation
 
 You can install the development version of testmap like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+install.packages("remotes")
+remotes::install_github("darrennorris/testmap")
 ```
 
 ## Example
@@ -48,3 +61,16 @@ You can also embed plots, for example:
 
 In that case, don’t forget to commit and push the resulting figure
 files, so they display on GitHub and CRAN.
+
+Package developed and built using the following guides:
+
+- Fan Wang:
+  <https://fanwangecon.github.io/PkgTestR/articles/ffv_pkgdown_github.html>
+  and
+
+- Emil Hvitfeldt:
+  <https://emilhvitfeldt.com/post/2018-09-02-usethis-workflow-for-package-development/>
+  and
+
+- Saskia O:
+  <https://www.marinedatascience.co/blog/2020/01/09/checklist-for-r-package-re-submissions-on-cran/>

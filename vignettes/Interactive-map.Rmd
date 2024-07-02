@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, echo=FALSE}
 library(testmap)
 ```
 
@@ -38,7 +38,31 @@ pal <- colorFactor(
   palette = c("#7274C1", "#A3720E"),
   domain = points_bau4326$flag_50_42y
 )
- 
+ # basemap with tile control. not working.
+basemap <- leaflet::leaflet() %>%
+  # add different provider tiles
+  addProviderTiles(
+    "OpenStreetMap",
+    # give the layer a name
+    group = "OpenStreetMap"
+  ) %>%
+  addProviderTiles(
+    "Stamen.Terrain",
+    group = "Stamen.Terrain"
+  ) %>%
+  addProviderTiles(
+    "Esri.WorldImagery",
+    group = "Esri.WorldImagery"
+  ) %>%
+# add a layers control
+  addLayersControl(
+    baseGroups = c(
+      "OpenStreetMap", "Stamen.Terrain", "Esri.WorldImagery"
+    ),
+    # position it on the topleft
+    position = "topleft"
+  )
+
 # interactive map
 leaflet::leaflet(data = points_bau4326) |> 
   addTiles() |>
