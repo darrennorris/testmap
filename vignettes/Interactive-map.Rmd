@@ -22,11 +22,12 @@ library(testmap)
 ```{r load-packages, echo=FALSE, message=FALSE, warning=FALSE}
 library(dplyr)
 library(leaflet)
+library(leafem)
 library(sf)
 ```
 
 Use the interactive map to check population changes.
-```{r make-map}
+```{r make-map, echo=FALSE, message=FALSE, warning=FALSE}
 points_bau4326 <- points_bau |> 
   #filter(BASIN_N == "Orinoco") |>
   arrange(BASIN_N, SUBBASI, BB_ID, REACH_ID) |> 
@@ -51,7 +52,9 @@ group = "points_bau4326"
              color = ~pal(flag_50_42y), 
 group = "points_bau4326_low"
 ) |>                        
-  groupOptions("points_bau4326_low", zoomLevels = 9:15)
+  groupOptions("points_bau4326_low", zoomLevels = 9:15) |> 
+  addScaleBar() |> 
+  leafem::addMouseCoordinates()
 
   
 ```
