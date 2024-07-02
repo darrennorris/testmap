@@ -18,5 +18,5 @@ Depends:
 LazyData: true
 Imports: 
     sf
-URL: https://github.com/darrennorris/testmap
+URL: https://github.com/darrennorris/testmap, https://darrennorris.github.io/testmap/
 BugReports: https://github.com/darrennorris/testmap/issues
