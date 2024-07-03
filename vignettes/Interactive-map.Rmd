@@ -26,18 +26,30 @@ library(leafem)
 library(sf)
 ```
 
-Use the interactive map to check population changes.
+Use the interactive map below to check population changes. Zoom in to see 
+where *Podocnemis unilfilis* is Endangered based on IUCN Redlist criteria - A3bd.
+
+This is an extension of [Norris et al 2019](https://doi.org/10.1016/j.biocon.2019.02.022) that includes:
+
+- stochastic population projections 
+- threats caused by human acessibility (hunting and habitat change) and actions that reduce river connectivity.
+
+When you zoom in you will see brown shaded points that show where 
+populations are expected to decline by 50% or more in 42 years
 ```{r make-map, echo=FALSE, message=FALSE, warning=FALSE}
 points_bau4326 <- points_bau |> 
   #filter(BASIN_N == "Orinoco") |>
   arrange(BASIN_N, SUBBASI, BB_ID, REACH_ID) |> 
-  filter(row_number() %% 5 == 1) |> st_as_sf() |> st_transform(4326)
+  filter(row_number() %% 5 == 1) |> st_as_sf() |> st_transform(4326) 
+levels(points_bau4326$flag_50_42y) <- c("No", "Yes")
 points_bau4326_low <- points_bau4326
 # colour palette
-pal <- colorFactor(
-  palette = c("#7274C1", "#A3720E"),
+leaf_pal <- colorFactor(
+  palette = c("#7274C1", "#A3720E"), 
   domain = points_bau4326$flag_50_42y
 )
+
+mypal <- c("#7274C1", "#A3720E")
  # basemap with tile control. not working.
 basemap <- leaflet::leaflet() %>%
   # add different provider tiles
@@ -64,22 +76,25 @@ basemap <- leaflet::leaflet() %>%
   )
 
 # interactive map
-leaflet::leaflet(data = points_bau4326) |> 
-  addTiles() |>
-  addCircleMarkers(color = ~pal(flag_50_42y), 
+leaflet::leaflet(points_bau4326_low) |> 
+  addTiles() |> 
+  addCircles(color = ~leaf_pal(flag_50_42y), 
+             group = "points_bau4326_low"
+) |>  
+  addCircleMarkers(color = ~leaf_pal(flag_50_42y), 
              stroke = FALSE, fillOpacity = 0.4, 
 clusterOptions = markerClusterOptions(), 
 group = "points_bau4326"
-) |>                        
+) |> 
+  addLegend("bottomright", pal = leaf_pal, title="Endangered",
+            values = ~flag_50_42y,
+            group = "en_legend") |> 
   groupOptions("points_bau4326", zoomLevels = 1:8) |> 
-  addCircles(data = points_bau4326_low, 
-             color = ~pal(flag_50_42y), 
-group = "points_bau4326_low"
-) |>                        
   groupOptions("points_bau4326_low", zoomLevels = 9:15) |> 
+  groupOptions("en_legend", zoomLevels = 9:15) |> 
   addScaleBar() |> 
   leafem::addMouseCoordinates()
-
+  
   
 ```
 
