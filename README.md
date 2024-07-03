@@ -35,7 +35,7 @@ Maps of the projected future changes can be found online.
 
 You can download the data to check and visualise using R. testmap cannot
 be submitted to CRAN as the data files are large and the package does
-not pass “CMD” checks.
+not therefore pass “R-CMD” checks.
 
 So you need to install testmap like so:
 
