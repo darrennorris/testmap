@@ -11,8 +11,19 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![R-CMD-check](https://github.com/darrennorris/testmap/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/darrennorris/testmap/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of testmap is to present projected future population changes of
-the Yellow-spotted River Turtle (*Podocnemis unifilis*).
+The goal of testmap is to map future population changes of the
+Yellow-spotted river turtle (*Podocnemis unifilis*).
+
+## Objectives
+
+These maps are being used to
+
+- Provide an updated assesment of how threatened the species is.
+
+- Inform development of and implement improvements to the modelling
+  process.
+
+## Results
 
 Maps of the projected future changes can be found online.
 
@@ -22,9 +33,11 @@ Maps of the projected future changes can be found online.
 
 ## Installation
 
-You can also download the data to check and visualise using R. As the
-data files are large they cannot be submitted to CRAN. So you need to
-install testmap like so:
+You can download the data to check and visualise using R. testmap cannot
+be submitted to CRAN as the data files are large and the package does
+not pass “CMD” checks.
+
+So you need to install testmap like so:
 
 ``` r
 install.packages("remotes")
