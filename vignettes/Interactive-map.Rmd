@@ -102,3 +102,8 @@ When you zoom in you will see shaded points. Points are brown where
 populations are expected to decline by 50% or more within 3 generations (42 years).
 Brown points therefore represent rivers where the species is Endangered, 
 following the IUCN Redlist criteria - A3bd.
+
+## Next steps
+
+ - Update using points from Free Flowing Rivers    
+ <https://www.worldwildlife.org/pages/free-flowing-rivers>
