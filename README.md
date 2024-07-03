@@ -12,7 +12,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 <!-- badges: end -->
 
 The goal of testmap is to present projected future population changes of
-**Podocnemis unifilis**.
+the Yellow-spotted River Turtle (*Podocnemis unifilis*).
 
 Maps of the projected future changes can be found online.
 
@@ -22,7 +22,9 @@ Maps of the projected future changes can be found online.
 
 ## Installation
 
-You can install the development version of testmap like so:
+You can also download the data to check and visualise using R. As the
+data files are large they cannot be submitted to CRAN. So you need to
+install testmap like so:
 
 ``` r
 install.packages("remotes")
