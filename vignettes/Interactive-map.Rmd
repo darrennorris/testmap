@@ -35,7 +35,13 @@ This is an extension of [Norris et al 2019](https://doi.org/10.1016/j.biocon.201
 - threats caused by human acessibility (hunting and habitat change) and actions that reduce river connectivity.
 
 When you zoom in you will see brown shaded points that show where 
-populations are expected to decline by 50% or more in 42 years
+populations are expected to decline by 50% or more within 3 generations (42 years).
+Brown points therefore represent rivers where the species is Endangered, 
+following the IUCN Redlist criteria - A3bd.
+
+Due to the number of points the map can become slow to respond when you zoom in.
+Zoom out to a level showing fewer points and you can pan around the map 
+to find the area of interest then zoom in again to check the coloured points.
 ```{r make-map, echo=FALSE, message=FALSE, warning=FALSE}
 points_bau4326 <- points_bau |> 
   #filter(BASIN_N == "Orinoco") |>
