@@ -25,7 +25,8 @@ These maps are being used to
 
 ## Results
 
-Maps of the projected future changes can be found online.
+Summaries of the results including maps of the projected future changes
+can be found online.
 
 - 3 generation.  
   Predicted changes after 42 years:
