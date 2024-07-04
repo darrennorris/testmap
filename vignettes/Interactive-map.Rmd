@@ -24,6 +24,7 @@ library(dplyr)
 library(leaflet)
 library(leafem)
 library(sf)
+library(knitr)
 ```
 Use the interactive map below to check population changes. Zoom in to see 
 where *Podocnemis unilfilis* is Endangered based on IUCN Redlist criteria - A3bd.
@@ -102,6 +103,27 @@ When you zoom in you will see shaded points. Points are brown where
 populations are expected to decline by 50% or more within 3 generations (42 years).
 Brown points therefore represent rivers where the species is Endangered, 
 following the IUCN Redlist criteria - A3bd.
+
+A summary of the results is presented below.
+```{r totals-country, echo=FALSE}
+points_table <- points_bau |> 
+  group_by(COUNTRY) |> 
+  mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
+  summarise(length_river = n(), 
+            length_end = sum((flag_e))) |> 
+    ungroup() |> 
+    mutate(length_not_end = length_river - length_end, 
+           prop_end = round((length_end / length_river), 2)) |> 
+  select(COUNTRY, prop_end, length_river, length_end, length_not_end)
+```
+
+```{r make-table, echo=FALSE}
+knitr::kable(points_table, 
+             col.names = c("Country", "Endangered (prop)","river length (km)", 
+                           "length End.", "length not End.")) 
+             
+```
+
 
 ## Next steps
 
