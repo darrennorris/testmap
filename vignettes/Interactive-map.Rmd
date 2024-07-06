@@ -35,6 +35,7 @@ This is an extension of [Norris et al 2019](https://doi.org/10.1016/j.biocon.201
 - stochastic population projections 
 - threats caused by human acessibility (hunting and habitat change) and actions that reduce river connectivity.
 
+## Map
 Due to the number of points, the map can become slow to respond when you zoom in.
 Zoom out to a level showing fewer points and you can pan around the map 
 to find the area of interest. Then zoom in again to check the coloured points.
@@ -105,10 +106,12 @@ populations are expected to decline by 50% or more within 3 generations (42 year
 Brown points therefore represent rivers where the species is Endangered, 
 following the IUCN Redlist criteria - A3bd.
 
+## Tables
 A summary of the results is presented below. Summaries by country and 
 major basin.
-Summary by country.
-```{r totals-country, echo=FALSE}
+
+### Summary by country.
+```{r totals-country, echo=FALSE, warning=FALSE, message=FALSE}
 table_country <- points_bau |> 
   group_by(COUNTRY) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
@@ -127,8 +130,8 @@ knitr::kable(table_country,
              
 ```
 
-Summary by basin.
-```{r totals-basin, echo=FALSE}
+### Summary by basin.
+```{r totals-basin, echo=FALSE, message=FALSE, warning=FALSE}
 table_basin <- points_bau |> 
   group_by(BASIN_N) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
@@ -147,8 +150,8 @@ knitr::kable(table_basin,
              
 ```
 
-Summary by major basins and countries.
-```{r totals-basin-country, echo=FALSE}
+### Summary by major basins and countries.
+```{r totals-basin-country, echo=FALSE, message=FALSE, warning=FALSE}
 table_basin_country <- points_bau |> 
   group_by(BASIN_N, COUNTRY) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
