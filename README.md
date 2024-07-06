@@ -36,7 +36,7 @@ can be found online.
 
 You can download the data to check and visualise using R. testmap cannot
 be submitted to CRAN as the data files are large and the package does
-not therefore pass “R-CMD” checks.
+not therefore pass “cran” checks.
 
 So you need to install testmap like so:
 
