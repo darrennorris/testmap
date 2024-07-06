@@ -25,6 +25,7 @@ library(leaflet)
 library(leafem)
 library(sf)
 library(knitr)
+library(kableExtra)
 ```
 Use the interactive map below to check population changes. Zoom in to see 
 where *Podocnemis unilfilis* is Endangered based on IUCN Redlist criteria - A3bd.
@@ -104,9 +105,11 @@ populations are expected to decline by 50% or more within 3 generations (42 year
 Brown points therefore represent rivers where the species is Endangered, 
 following the IUCN Redlist criteria - A3bd.
 
-A summary of the results is presented below.
+A summary of the results is presented below. Summaries by country and 
+major basin.
+Summary by country.
 ```{r totals-country, echo=FALSE}
-points_table <- points_bau |> 
+table_country <- points_bau |> 
   group_by(COUNTRY) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
   summarise(length_river = n(), 
@@ -117,10 +120,52 @@ points_table <- points_bau |>
   select(COUNTRY, prop_end, length_river, length_end, length_not_end)
 ```
 
-```{r make-table, echo=FALSE}
-knitr::kable(points_table, 
+```{r make-table-country, echo=FALSE}
+knitr::kable(table_country, 
              col.names = c("Country", "Endangered (prop)","river length (km)", 
                            "length End.", "length not End.")) 
+             
+```
+
+Summary by basin.
+```{r totals-basin, echo=FALSE}
+table_basin <- points_bau |> 
+  group_by(BASIN_N) |> 
+  mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
+  summarise(length_river = n(), 
+            length_end = sum((flag_e))) |> 
+    ungroup() |> 
+    mutate(length_not_end = length_river - length_end, 
+           prop_end = round((length_end / length_river), 2)) |> 
+  select(BASIN_N, prop_end, length_river, length_end, length_not_end)
+```
+
+```{r make-table-basin, echo=FALSE}
+knitr::kable(table_basin, 
+             col.names = c("Basin", "Endangered (prop)","river length (km)", 
+                           "length End.", "length not End.")) 
+             
+```
+
+Summary by major basins and countries.
+```{r totals-basin-country, echo=FALSE}
+table_basin_country <- points_bau |> 
+  group_by(BASIN_N, COUNTRY) |> 
+  mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
+  summarise(length_river = n(), 
+            length_end = sum((flag_e))) |> 
+    ungroup() |> 
+    mutate(length_not_end = length_river - length_end, 
+           prop_end = round((length_end / length_river), 2)) |> 
+  select(BASIN_N, COUNTRY, prop_end, length_river, length_end, length_not_end)
+```
+
+```{r make-table-basin-country, echo=FALSE}
+knitr::kable(table_basin_country, 
+             col.names = c("Basin", "Country","Endangered (prop)", 
+                           "river length (km)", 
+                           "length End.", "length not End.")) |> 
+  kableExtra::column_spec(3:6, width = "3cm")
              
 ```
 
