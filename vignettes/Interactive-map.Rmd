@@ -113,20 +113,40 @@ major basin.
 ### Summary by country.
 ```{r totals-country, echo=FALSE, warning=FALSE, message=FALSE}
 table_country <- points_bau |> 
+  mutate(flag_ff = if_else(Free.flowing == "yes", 1, 0)) |>
   group_by(COUNTRY) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
   summarise(length_river = n(), 
-            length_end = sum((flag_e))) |> 
+            length_end = sum((flag_e)), 
+           length_ff = sum(flag_ff), 
+           prop_ff = round((sum(flag_ff) / length_river), 2)) |> 
     ungroup() |> 
     mutate(length_not_end = length_river - length_end, 
-           prop_end = round((length_end / length_river), 2)) |> 
-  select(COUNTRY, prop_end, length_river, length_end, length_not_end)
+           prop_end = round((length_end / length_river), 2), 
+           length_not_ff = length_river - length_ff
+           
+) |> 
+  select(COUNTRY, prop_end, length_river, length_end, length_not_end, 
+         prop_ff, length_ff, length_not_ff)
+
+# Sum rows of each column if numeric 
+func <- function(z) if (is.numeric(z)) sum(z) else '' 
+sumrow <- as.data.frame(lapply(table_country, func))
+# Give name to the first element of the new data frame created above
+sumrow[1] <- "Total"
+# remove unwanted value
+sumrow[c(2, 6)] <- NA
 ```
 
 ```{r make-table-country, echo=FALSE}
-knitr::kable(table_country, 
-             col.names = c("Country", "Endangered (prop)","river length (km)", 
-                           "length End.", "length not End.")) 
+options(knitr.kable.NA = '')
+
+bind_rows(table_country, sumrow) |> 
+  #select(COUNTRY, prop_end, length_river, length_end, length_not_end) |>
+knitr::kable(col.names = c("Country", "Endangered (prop)","river length (km)", 
+                           "length End.", "length not End.", 
+                           "Free Flowing (prop)", "length ff", "length not ff")) |> 
+  kableExtra::column_spec(2:8, width = "2.5cm")
              
 ```
 
