@@ -31,7 +31,7 @@ library(htmltools)
 Use the interactive map below to check population changes. Zoom in to see 
 where *Podocnemis unilfilis* is Endangered based on IUCN Redlist criteria - A3bd.
 
-This is an extension of [Norris et al 2019](https://doi.org/10.1016/j.biocon.2019.02.022) that includes:
+This is an extension of [Norris et. al. 2019](https://doi.org/10.1016/j.biocon.2019.02.022) that includes:
 
 - stochastic population projections 
 - threats caused by human acessibility (hunting and habitat change) and actions that reduce river connectivity.
@@ -40,7 +40,60 @@ This is an extension of [Norris et al 2019](https://doi.org/10.1016/j.biocon.201
 Due to the number of points, the map can become slow to respond when you zoom in.
 Zoom out to a level showing fewer points and you can pan around the map 
 to find the area of interest. Then zoom in again to check the coloured points.
-```{r make-map, echo=FALSE, message=FALSE, warning=FALSE}
+
+### Free-flowing rivers
+```{r make-map-ffr, echo=FALSE, message=FALSE, warning=FALSE}
+points_bau4326 <- points_bau_ffr |> 
+  arrange(BASIN_NAME, subbasin, BB_ID, REACH_ID) |> 
+  filter(row_number() %% 5 == 1) |> st_as_sf(crs = 3395) |> st_transform(4326) 
+levels(points_bau4326$flag_50_42y) <- c("No", "Yes")
+points_bau4326_low <- points_bau4326
+# label to plot with circle
+points_bau4326_low$label <- paste("Prot = ", points_bau4326_low$Protected, 
+                                  "Acc = ", points_bau4326_low$Accessible, 
+                                  "Free = ", points_bau4326_low$Free.flowing)
+# colour palette
+leaf_pal <- colorFactor(
+  palette = c("#7274C1", "#A3720E"), 
+  domain = points_bau4326$flag_50_42y
+)
+
+mypal <- c("#7274C1", "#A3720E")
+
+# interactive map. Optins added to make panning smoother....
+leaflet::leaflet(points_bau4326_low, 
+                 options = leafletOptions(preferCanvas = TRUE)) |> 
+  addTiles(options = tileOptions(
+  updateWhenZooming = FALSE,      # map won't update tiles until zoom is done
+  updateWhenIdle = TRUE)) |> 
+  addCircles(color = ~leaf_pal(flag_50_42y), 
+             popup = ~htmlEscape(label),
+             group = "points_bau4326_low"
+) |>  
+  addCircleMarkers(color = ~leaf_pal(flag_50_42y), 
+             stroke = FALSE, fillOpacity = 0.4, 
+clusterOptions = markerClusterOptions(), 
+group = "points_bau4326"
+) |> 
+  addLegend("bottomright", pal = leaf_pal, title="Endangered",
+            values = ~flag_50_42y,
+            group = "en_legend") |> 
+  groupOptions("points_bau4326", zoomLevels = 1:8) |> 
+  groupOptions("points_bau4326_low", zoomLevels = 9:15) |> 
+  groupOptions("en_legend", zoomLevels = 9:15) |> 
+  addScaleBar() |> 
+  leafem::addMouseCoordinates()
+  
+```
+
+When you zoom in you will see shaded points. Points are brown where 
+populations are expected to decline by 50% or more within 3 generations (42 years).
+Brown points therefore represent rivers where the species is Endangered, 
+following the IUCN Redlist criteria - A3bd.
+
+### River points Norris 2019
+Map below uses the river points from 
+```{r make-map-norris, echo=FALSE, message=FALSE, warning=FALSE}
 points_bau4326 <- points_bau |> 
   #filter(BASIN_N == "Orinoco") |>
   arrange(BASIN_N, SUBBASI, BB_ID, REACH_ID) |> 
@@ -119,11 +172,26 @@ following the IUCN Redlist criteria - A3bd.
 A summary of the results is presented below. Summaries by country and 
 major basin.
 
+```{r totals-access, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
+# Check length of free flowing by Accessibility.
+points_bau |> 
+  mutate(flag_ff = if_else(Free.flowing == "yes", 1, 0)) |>
+  group_by(Accessible) |> 
+  summarise(length_river = n(), 
+           length_ff = sum(flag_ff)) |> 
+  ungroup() |> 
+  mutate(prop_ff = round((length_ff / length_river), 2), 
+         length_notff = (length_river - length_ff)) |> 
+  select(Accessible, prop_ff, length_river, length_ff, length_notff) 
+  
+```
+
+
 ### Summary by country.
 ```{r totals-country, echo=FALSE, warning=FALSE, message=FALSE}
 table_country <- points_bau |> 
   mutate(flag_ff = if_else(Free.flowing == "yes", 1, 0)) |>
-  group_by(COUNTRY) |> 
+  group_by(COUNTRY, Accessible) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
   summarise(length_river = n(), 
             length_end = sum((flag_e)), 
@@ -135,7 +203,7 @@ table_country <- points_bau |>
            length_not_ff = length_river - length_ff
            
 ) |> 
-  select(COUNTRY, prop_end, length_river, length_end, length_not_end, 
+  select(COUNTRY, Accessible, prop_end, length_river, length_end, length_not_end, 
          prop_ff, length_ff, length_not_ff)
 
 # Sum rows of each column if numeric 
@@ -144,10 +212,11 @@ sumrow <- as.data.frame(lapply(table_country, func))
 # Give name to the first element of the new data frame created above
 sumrow[1] <- "Total"
 # remove unwanted value
-sumrow[c(2, 6)] <- NA
+sumrow[c(2, 3, 7)] <- NA
 ```
 
-```{r make-table-country, echo=FALSE}
+```{r make-table-country, echo=FALSE, eval=FALSE}
+# This throws an error when checked. Vignette wont build.
 options(knitr.kable.NA = '')
 
 bind_rows(table_country, sumrow) |> 
@@ -155,7 +224,7 @@ bind_rows(table_country, sumrow) |>
 knitr::kable(col.names = c("Country", "Endangered (prop)","river length (km)", 
                            "length End.", "length not End.", 
                            "Free Flowing (prop)", "length ff", "length not ff")) |> 
-  kableExtra::column_spec(2:8, width = "2.5cm")
+  kableExtra::column_spec(2:9, width = "2.5cm")
              
 ```
 

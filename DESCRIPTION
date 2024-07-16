@@ -21,6 +21,7 @@ VignetteBuilder: knitr
 Depends: 
     R (>= 2.10)
 LazyData: true
+LazyDataCompression: bzip2
 Imports: 
     sf
 URL: https://github.com/darrennorris/testmap, https://darrennorris.github.io/testmap/
