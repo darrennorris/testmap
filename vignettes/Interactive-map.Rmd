@@ -91,8 +91,8 @@ populations are expected to decline by 50% or more within 3 generations (42 year
 Brown points therefore represent rivers where the species is Endangered, 
 following the IUCN Redlist criteria - A3bd.
 
-### River points Norris 2019
-Map below uses the river points from 
+### River points Norris et. al. 2019
+Map below uses the river points from Norris et. al. 2019.
 ```{r make-map-norris, echo=FALSE, message=FALSE, warning=FALSE}
 points_bau4326 <- points_bau |> 
   #filter(BASIN_N == "Orinoco") |>
@@ -186,7 +186,6 @@ points_bau |>
   
 ```
 
-
 ### Summary by country.
 ```{r totals-country, echo=FALSE, warning=FALSE, message=FALSE}
 table_country <- points_bau |> 
@@ -229,6 +228,7 @@ knitr::kable(col.names = c("Country", "Endangered (prop)","river length (km)",
 ```
 
 ### Summary by basin.
+Using resutls from updated Norris et. al. 2019.
 ```{r totals-basin, echo=FALSE, message=FALSE, warning=FALSE}
 table_basin <- points_bau |> 
   group_by(BASIN_N) |> 
@@ -247,6 +247,27 @@ knitr::kable(table_basin,
                            "length End.", "length not End.")) 
              
 ```
+
+Same using Free-flowing rivers data.
+```{r totals-basin-ffr, echo=FALSE, message=FALSE, warning=FALSE}
+table_basin_ffr <- points_bau_ffr |> 
+  group_by(BASIN_NAME) |> 
+  mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
+  summarise(length_river = n(), 
+            length_end = sum((flag_e))) |> 
+    ungroup() |> 
+    mutate(length_not_end = length_river - length_end, 
+           prop_end = round((length_end / length_river), 2)) |> 
+  select(BASIN_NAME, prop_end, length_river, length_end, length_not_end)
+```
+
+```{r make-table-basin-ffr, echo=FALSE}
+knitr::kable(table_basin_ffr, 
+             col.names = c("Basin", "Endangered (prop)","river length (km)", 
+                           "length End.", "length not End.")) 
+             
+```
+
 
 ### Summary by major basins and countries.
 ```{r totals-basin-country, echo=FALSE, message=FALSE, warning=FALSE}
