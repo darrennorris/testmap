@@ -214,16 +214,16 @@ sumrow[1] <- "Total"
 sumrow[c(2, 3, 7)] <- NA
 ```
 
-```{r make-table-country, echo=FALSE, eval=FALSE}
+```{r make-table-country, echo=FALSE}
 # This throws an error when checked. Vignette wont build.
 options(knitr.kable.NA = '')
 
 bind_rows(table_country, sumrow) |> 
   #select(COUNTRY, prop_end, length_river, length_end, length_not_end) |>
-knitr::kable(col.names = c("Country", "Endangered (prop)","river length (km)", 
+knitr::kable(col.names = c("Country", "Accessible" ,"Endangered (prop)","river length (km)", 
                            "length End.", "length not End.", 
                            "Free Flowing (prop)", "length ff", "length not ff")) |> 
-  kableExtra::column_spec(2:9, width = "2.5cm")
+  kableExtra::column_spec(3:9, width = "2.5cm")
              
 ```
 
