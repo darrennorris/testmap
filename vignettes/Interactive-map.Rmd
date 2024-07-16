@@ -78,9 +78,9 @@ group = "points_bau4326"
   addLegend("bottomright", pal = leaf_pal, title="Endangered",
             values = ~flag_50_42y,
             group = "en_legend") |> 
-  groupOptions("points_bau4326", zoomLevels = 1:8) |> 
-  groupOptions("points_bau4326_low", zoomLevels = 9:15) |> 
-  groupOptions("en_legend", zoomLevels = 9:15) |> 
+  groupOptions("points_bau4326", zoomLevels = 1:7) |> 
+  groupOptions("points_bau4326_low", zoomLevels = 8:15) |> 
+  groupOptions("en_legend", zoomLevels = 8:15) |> 
   addScaleBar() |> 
   leafem::addMouseCoordinates()
   
