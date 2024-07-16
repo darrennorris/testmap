@@ -1,27 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://darrennorris.github.io/testmap/404.html</loc>
-  </url>
-  <url>
-    <loc>https://darrennorris.github.io/testmap/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://darrennorris.github.io/testmap/articles/Interactive-map.html</loc>
-  </url>
-  <url>
-    <loc>https://darrennorris.github.io/testmap/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://darrennorris.github.io/testmap/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://darrennorris.github.io/testmap/index.html</loc>
-  </url>
-  <url>
-    <loc>https://darrennorris.github.io/testmap/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://darrennorris.github.io/testmap/reference/points_bau.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://darrennorris.github.io/testmap/404.html</loc></url>
+<url><loc>https://darrennorris.github.io/testmap/LICENSE.html</loc></url>
+<url><loc>https://darrennorris.github.io/testmap/articles/Interactive-map.html</loc></url>
+<url><loc>https://darrennorris.github.io/testmap/articles/index.html</loc></url>
+<url><loc>https://darrennorris.github.io/testmap/authors.html</loc></url>
+<url><loc>https://darrennorris.github.io/testmap/index.html</loc></url>
+<url><loc>https://darrennorris.github.io/testmap/reference/index.html</loc></url>
+<url><loc>https://darrennorris.github.io/testmap/reference/points_bau.html</loc></url>
+<url><loc>https://darrennorris.github.io/testmap/reference/points_bau_ffr.html</loc></url>
 </urlset>
+
