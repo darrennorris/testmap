@@ -43,8 +43,8 @@ where *Podocnemis unilfilis* is Endangered based on IUCN Redlist criteria - A3bd
 
 This is an extension of [Norris et. al. 2019](https://doi.org/10.1016/j.biocon.2019.02.022) that includes:
 
-- stochastic population projections 
-- threats caused by human acessibility (hunting and habitat change) and actions that reduce river connectivity.
+- Stochastic population projections. 
+- Future impacts to populations caused by human acessibility (hunting and habitat change) and actions that reduce river connectivity.
 
 ## Map
 Due to the number of points, the map can become slow to respond when you zoom in.
@@ -292,6 +292,28 @@ table_basin_country <- points_bau |>
 
 ```{r make-table-basin-country, echo=FALSE}
 knitr::kable(table_basin_country, 
+             col.names = c("Basin", "Country","Endangered (prop)", 
+                           "river length (km)", 
+                           "length End.", "length not End.")) |> 
+  kableExtra::column_spec(3:6, width = "3cm")
+             
+```
+
+Same with Free-flowing rivers.....
+```{r totals-basin-country-ffr, echo=FALSE, message=FALSE, warning=FALSE}
+table_basin_country_ffr <- points_bau_ffr |> 
+  group_by(BASIN_NAME, COUNTRY) |> 
+  mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
+  summarise(length_river = n(), 
+            length_end = sum((flag_e))) |> 
+    ungroup() |> 
+    mutate(length_not_end = length_river - length_end, 
+           prop_end = round((length_end / length_river), 2)) |> 
+  select(BASIN_NAME, COUNTRY, prop_end, length_river, length_end, length_not_end)
+```
+
+```{r make-table-basin-country-ffr, echo=FALSE}
+knitr::kable(table_basin_country_ffr, 
              col.names = c("Basin", "Country","Endangered (prop)", 
                            "river length (km)", 
                            "length End.", "length not End.")) |> 
