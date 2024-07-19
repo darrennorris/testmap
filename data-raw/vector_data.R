@@ -42,3 +42,10 @@ sf::st_crs(points_bau_ffr) <- NA
 points_bau_ffr <- points_bau_ffr |> data.frame()
 # export
 usethis::use_data(points_bau_ffr, overwrite = TRUE)
+
+# subset for mapping
+points_bau_ffr_map <- points_bau_ffr |>
+  arrange(BASIN_NAME, subbasin, BB_ID, REACH_ID) |>
+  filter(row_number() %% 10 == 1)
+# export
+usethis::use_data(points_bau_ffr_map, overwrite = TRUE)
