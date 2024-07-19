@@ -45,7 +45,7 @@ to find the area of interest. Then zoom in again to check the coloured points.
 ```{r make-map-ffr, echo=FALSE, message=FALSE, warning=FALSE}
 points_bau4326 <- points_bau_ffr |> 
   arrange(BASIN_NAME, subbasin, BB_ID, REACH_ID) |> 
-  filter(row_number() %% 5 == 1) |> st_as_sf(crs = 3395) |> st_transform(4326) 
+  filter(row_number() %% 10 == 1) |> st_as_sf(crs = 3395) |> st_transform(4326) 
 levels(points_bau4326$flag_50_42y) <- c("No", "Yes")
 points_bau4326_low <- points_bau4326
 # label to plot with circle
