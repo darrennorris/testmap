@@ -25,7 +25,7 @@ usethis::use_data(points_bau, overwrite = TRUE)
 
 # .rds with Free-flowing river points made by TACAR https://github.com/darrennorris/TACAR
 mypath <- "yourpathhere"
-mypath <- "C:\\Users\\user\\Documents\\Articles\\2024_Norris_Greenstatus\\TACAR\\inst\\other\\scenario_res_ffr.rds"
+mypath <- "C:\\Users\\user\\Documents\\Articles\\2024_Norris_Greenstatus\\TACAR\\inst\\other\\scenario_res_ffr1a5.rds"
 # points
 inpoints <- readRDS(mypath)
 # keep only columns needed for plotting

@@ -215,7 +215,6 @@ sumrow[c(2, 3, 7)] <- NA
 ```
 
 ```{r make-table-country, echo=FALSE}
-# This throws an error when checked. Vignette wont build.
 options(knitr.kable.NA = '')
 
 bind_rows(table_country, sumrow) |> 
@@ -228,7 +227,7 @@ knitr::kable(col.names = c("Country", "Accessible" ,"Endangered (prop)","river l
 ```
 
 ### Summary by basin.
-Using resutls from updated Norris et. al. 2019.
+Using results from updated Norris et. al. 2019.
 ```{r totals-basin, echo=FALSE, message=FALSE, warning=FALSE}
 table_basin <- points_bau |> 
   group_by(BASIN_N) |> 
