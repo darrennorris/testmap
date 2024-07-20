@@ -1,0 +1,68 @@
+---
+title: "testmap"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{testmap}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(testmap)
+```
+
+This is a basic example which shows a map of where *Podocnemis unifilis* 
+is Endangered in French Guiana (this country was chosen for illustrative 
+purposes because there are relatively few river points).
+
+```{r map-example}
+library(testmap)
+library(dplyr)
+library(sf)
+library(leaflet)
+library(leafem)
+## River points for specific country.
+points_bau4326 <- points_bau_ffr_map |> 
+  dplyr::filter(COUNTRY == "French Guiana") |> # country
+  sf::st_as_sf(crs = 3395) |> 
+  sf::st_transform(4326) 
+levels(points_bau4326$flag_50_42y) <- c("No", "Yes")
+
+# colour palette
+leaf_pal <- colorFactor(
+  palette = c("#7274C1", "#A3720E"), 
+  domain = points_bau4326$flag_50_42y
+)
+
+# interactive map. Options added to make panning smoother....
+leaflet::leaflet(points_bau4326, 
+                 options = leafletOptions(preferCanvas = TRUE)) |> 
+  addTiles(options = tileOptions(
+  updateWhenZooming = FALSE,      # map won't update tiles until zoom is done
+  updateWhenIdle = TRUE)) |> 
+  addCircles(color = ~leaf_pal(flag_50_42y), 
+             group = "points_bau4326_low"
+) |>  
+  addCircleMarkers(color = ~leaf_pal(flag_50_42y), 
+             stroke = FALSE, fillOpacity = 0.4, 
+clusterOptions = markerClusterOptions(), 
+group = "points_bau4326"
+) |> 
+  addLegend("bottomright", pal = leaf_pal, title="Endangered",
+            values = ~flag_50_42y,
+            group = "en_legend") |> 
+  groupOptions("points_bau4326", zoomLevels = 1:6) |> 
+  groupOptions("points_bau4326_low", zoomLevels = 7:15) |> 
+  addScaleBar() |> 
+  leafem::addMouseCoordinates()
+
+```
+
+

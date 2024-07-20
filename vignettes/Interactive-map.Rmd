@@ -69,7 +69,7 @@ leaf_pal <- colorFactor(
 
 mypal <- c("#7274C1", "#A3720E")
 
-# interactive map. Optins added to make panning smoother....
+# interactive map. Options added to make panning smoother....
 leaflet::leaflet(points_bau4326_low, 
                  options = leafletOptions(preferCanvas = TRUE)) |> 
   addTiles(options = tileOptions(
