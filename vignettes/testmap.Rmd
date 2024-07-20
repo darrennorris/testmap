@@ -1,5 +1,5 @@
 ---
-title: "testmap"
+title: "Getting started: make a map"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{testmap}
