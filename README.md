@@ -47,23 +47,14 @@ remotes::install_github("darrennorris/testmap")
 
 ## Example
 
-This is a basic example which shows you a summary of where *Podocnemis
-unifilis* is Endangered.
+This is a basic example which shows a summary of where *Podocnemis
+unifilis* is Endangered.  
+An example with code to make a map is here:
+<https://darrennorris.github.io/testmap/articles/testmap.html>
 
 ``` r
 library(testmap)
 library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
-```
-
-``` r
 
 ## Summary by country.
 points_bau_ffr |> 
@@ -72,19 +63,23 @@ points_bau_ffr |>
   dplyr::summarise(length_river = n(), 
                    length_endangered = sum((flag_EN))) |>
     ungroup() |> 
-    mutate(proportion_endangered = round((length_endangered / length_river), 2))
-#> # A tibble: 9 × 4
-#>   COUNTRY       length_river length_endangered proportion_endangered
-#>   <chr>                <int>             <dbl>                 <dbl>
-#> 1 Bolivia              22217             15516                  0.7 
-#> 2 Brazil              190555            141183                  0.74
-#> 3 Colombia             38552             24122                  0.63
-#> 4 Ecuador               8302              7066                  0.85
-#> 5 French Guiana         3298              2082                  0.63
-#> 6 Guyana                7372              3311                  0.45
-#> 7 Peru                 47363             36750                  0.78
-#> 8 Suriname              5756              2643                  0.46
-#> 9 Venezuela            30022             16714                  0.56
+    mutate(proportion_endangered = round((length_endangered / length_river), 2)) |> 
+  mutate(threat_status = case_when(proportion_endangered >= 0.8 ~ "Critically Endangered", 
+                                   proportion_endangered >= 0.5 ~ "Endangered", 
+                                   proportion_endangered >= 0.3 ~ "Vulnerable", 
+                                   proportion_endangered >= 0.2 ~ "Near Threatened"))
+#> # A tibble: 9 × 5
+#>   COUNTRY     length_river length_endangered proportion_endangered threat_status
+#>   <chr>              <int>             <dbl>                 <dbl> <chr>        
+#> 1 Bolivia            22217             15516                  0.7  Endangered   
+#> 2 Brazil            190555            141183                  0.74 Endangered   
+#> 3 Colombia           38552             24122                  0.63 Endangered   
+#> 4 Ecuador             8302              7066                  0.85 Critically E…
+#> 5 French Gui…         3298              2082                  0.63 Endangered   
+#> 6 Guyana              7372              3311                  0.45 Vulnerable   
+#> 7 Peru               47363             36750                  0.78 Endangered   
+#> 8 Suriname            5756              2643                  0.46 Vulnerable   
+#> 9 Venezuela          30022             16714                  0.56 Endangered
 ```
 
 Package developed and built using the following guides:

@@ -14,20 +14,22 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+## Load packages
+```{r setup, warning=FALSE, message=FALSE}
 library(testmap)
-```
-
-This is a basic example which shows a map of where *Podocnemis unifilis* 
-is Endangered in French Guiana (this country was chosen for illustrative 
-purposes because there are relatively few river points).
-
-```{r map-example}
 library(testmap)
 library(dplyr)
 library(sf)
 library(leaflet)
 library(leafem)
+```
+
+## Make map
+This is a basic example which shows a map of where *Podocnemis unifilis* 
+is Endangered in French Guiana. This country was chosen for illustrative 
+purposes because there are relatively few river points.
+
+```{r map-example}
 ## River points for specific country.
 points_bau4326 <- points_bau_ffr_map |> 
   dplyr::filter(COUNTRY == "French Guiana") |> # country
