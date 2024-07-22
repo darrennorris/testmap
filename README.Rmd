@@ -55,7 +55,7 @@ remotes::install_github("darrennorris/testmap")
 ## Example
 
 This is a basic example which shows a summary of 
-where *Podocnemis unifilis* is Endangered.  
+where *Podocnemis unifilis* is Endangered in different countries.  
 Another example with code to make a map is here: 
 https://darrennorris.github.io/testmap/articles/testmap.html
 

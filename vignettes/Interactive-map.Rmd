@@ -228,7 +228,8 @@ table_country_ffr <- points_bau_ffr |>
   mutate(flag_ff = if_else(Free.flowing == "yes", 1, 0)) |>
   group_by(COUNTRY) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
-  summarise(length_river = n(), 
+  summarise(pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 3), 
+            length_river = n(), 
             length_end = sum((flag_e)), 
            length_ff = sum(flag_ff), 
            prop_ff = round((sum(flag_ff) / length_river), 2)) |> 
@@ -238,7 +239,7 @@ table_country_ffr <- points_bau_ffr |>
            length_not_ff = length_river - length_ff
            
 ) |> 
-  select(COUNTRY, prop_end, length_river, length_end, length_not_end, 
+  select(COUNTRY, pop_change, prop_end, length_river, length_end, length_not_end, 
          prop_ff, length_ff, length_not_ff)
 
 # Sum rows of each column if numeric 
@@ -247,7 +248,7 @@ sumrow_ffr <- as.data.frame(lapply(table_country_ffr, func))
 # Give name to the first element of the new data frame created above
 sumrow_ffr[1] <- "Total"
 # remove unwanted value
-sumrow_ffr[c(2, 6)] <- NA
+sumrow_ffr[c(2, 3, 7)] <- NA
 ```
 
 
@@ -255,11 +256,12 @@ sumrow_ffr[c(2, 6)] <- NA
 options(knitr.kable.NA = '')
 
 bind_rows(table_country_ffr, sumrow_ffr) |> 
-  select(COUNTRY, prop_end, length_river, length_end, length_not_end) |>
-knitr::kable(col.names = c("Country", "Endangered (prop)","river length (km)", 
+  select(COUNTRY, pop_change, prop_end, length_river, length_end, length_not_end) |>
+knitr::kable(col.names = c("Country", "Population change", 
+                           "Endangered (prop)","river length (km)", 
                            "length End.", "length not End.") 
              )|> 
-  kableExtra::column_spec(3:5, width = "2.5cm")
+  kableExtra::column_spec(3:6, width = "2.5cm")
              
 ```
 
@@ -363,14 +365,14 @@ fig_left <- tab_sum |>
   droplevels() |> 
   filter(BASIN_NAME %in% c("Amazon", "Coastal North")) |>
 ggplot(aes(x = COUNTRY, y = pop_change)) + 
-  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.2, ymax = -0.3),
-            fill="#F6DABF", alpha=0.2) + 
-  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.3, ymax = -0.5),
-            fill="#DEB688", alpha=0.2) + 
-  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.5, ymax = -0.8),
-            fill="#C09355", alpha=0.2) + 
-  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.8, ymax = -1),
-            fill="#A3720E", alpha=0.2) + 
+  annotate(xmin=-Inf, xmax=Inf, ymin = -0.2, ymax = -0.3,
+            fill="#F6DABF", geom = 'rect', alpha=0.4) + 
+  annotate(xmin=-Inf, xmax=Inf, ymin = -0.3, ymax = -0.5,
+            fill="#DEB688", geom = 'rect', alpha=0.4) + 
+  annotate(xmin=-Inf, xmax=Inf, ymin = -0.5, ymax = -0.8,
+            fill="#C09355", geom = 'rect', alpha=0.4) + 
+  annotate(xmin=-Inf, xmax=Inf, ymin = -0.8, ymax = -1,
+            fill="#A3720E", geom = 'rect', alpha=0.4) + 
   geom_col(aes(fill = COUNTRY)) + 
   geom_errorbar(aes(ymax = change_ucl_95, ymin = change_lcl_95), 
                 width = 0.2) + 
@@ -386,14 +388,14 @@ fig_right <- tab_sum |>
   droplevels() |> 
   filter(BASIN_NAME %in% c("Coastal South", "Orinoco")) |>
 ggplot(aes(x = COUNTRY, y = pop_change)) + 
-  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.2, ymax = -0.3),
-            fill="#F6DABF", alpha=0.2) + 
-  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.3, ymax = -0.5),
-            fill="#DEB688", alpha=0.2) + 
-  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.5, ymax = -0.8),
-            fill="#C09355", alpha=0.2) + 
-  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.8, ymax = -1),
-            fill="#A3720E", alpha=0.2) + 
+  annotate(xmin=-Inf, xmax=Inf, ymin = -0.2, ymax = -0.3,
+            fill="#F6DABF", geom = 'rect', alpha=0.4) + 
+  annotate(xmin=-Inf, xmax=Inf, ymin = -0.3, ymax = -0.5,
+            fill="#DEB688", geom = 'rect', alpha=0.4) + 
+  annotate(xmin=-Inf, xmax=Inf, ymin = -0.5, ymax = -0.8,
+            fill="#C09355", geom = 'rect', alpha=0.4) + 
+  annotate(xmin=-Inf, xmax=Inf, ymin = -0.8, ymax = -1,
+            fill="#A3720E", geom = 'rect', alpha=0.4) + 
   geom_col(aes(fill = COUNTRY)) + 
   geom_errorbar(aes(ymax = change_ucl_95, ymin = change_lcl_95), 
                 width = 0.2) + 
@@ -414,6 +416,8 @@ Table showing data values used in graph.
 
 ```{r make-table-basin-country-ffr, echo=FALSE}
 tab_sum |> 
+  filter(length_river > 21) |> 
+  droplevels() |>
   select(BASIN_NAME, COUNTRY, pop_change, length_river) |> 
   arrange(BASIN_NAME, COUNTRY) |>
 knitr::kable(col.names = c("Basin", "Country", "population change", 

@@ -48,7 +48,7 @@ remotes::install_github("darrennorris/testmap")
 ## Example
 
 This is a basic example which shows a summary of where *Podocnemis
-unifilis* is Endangered.  
+unifilis* is Endangered in different countries.  
 Another example with code to make a map is here:
 <https://darrennorris.github.io/testmap/articles/testmap.html>
 
@@ -76,15 +76,15 @@ points_bau_ffr |>
 #> # A tibble: 9 × 10
 #>   COUNTRY  pop_start pop_end pop_change change_lcl_95 change_ucl_95 length_river
 #>   <chr>        <dbl>   <dbl>      <dbl>         <dbl>         <dbl>        <int>
-#> 1 Bolivia     222170  94300.     -0.576        -0.584        -0.567        22217
+#> 1 Bolivia     222170  94300.     -0.576        -0.583        -0.568        22217
 #> 2 Brazil     1905550 712133.     -0.626        -0.629        -0.624       190555
 #> 3 Colombia    385520 199290.     -0.483        -0.489        -0.477        38552
-#> 4 Ecuador      83020  18194.     -0.781        -0.791        -0.771         8302
+#> 4 Ecuador      83020  18194.     -0.781        -0.791        -0.770         8302
 #> 5 French …     32980  17147.     -0.48         -0.502        -0.458         3298
-#> 6 Guyana       73720  55397.     -0.249        -0.263        -0.234         7372
+#> 6 Guyana       73720  55397.     -0.249        -0.264        -0.234         7372
 #> 7 Peru        473630 149614.     -0.684        -0.689        -0.679        47363
-#> 8 Suriname     57560  42552.     -0.261        -0.278        -0.243         5756
-#> 9 Venezue…    300220 185219.     -0.383        -0.391        -0.376        30022
+#> 8 Suriname     57560  42552.     -0.261        -0.279        -0.244         5756
+#> 9 Venezue…    300220 185219.     -0.383        -0.390        -0.376        30022
 #> # ℹ 3 more variables: length_endangered <dbl>, proportion_endangered <dbl>,
 #> #   threat_status <chr>
 ```
