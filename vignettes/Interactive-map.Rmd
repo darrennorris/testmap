@@ -42,7 +42,7 @@ library(htmltools)
 library(patchwork)
 ```
 Use the interactive map below to check population changes. Zoom in to see 
-where *Podocnemis unilfilis* is Endangered based on IUCN Redlist criteria - A3bd.
+where *Podocnemis unilfilis* is Endangered based on IUCN Red List criteria - A3bd.
 
 This is an extension of [Norris et. al. 2019](https://doi.org/10.1016/j.biocon.2019.02.022) that includes:
 
@@ -54,7 +54,6 @@ Due to the number of points, the map can become slow to respond when you zoom in
 Zoom out to a level showing fewer points and you can pan around the map 
 to find the area of interest. Then zoom in again to check the coloured points.
 
-### Free-flowing rivers
 ```{r make-map-ffr, echo=FALSE, message=FALSE, warning=FALSE}
 points_bau4326 <- sf::st_as_sf(points_bau_ffr_map, crs = 3395) |> 
   st_transform(4326) 
@@ -98,14 +97,15 @@ group = "points_bau4326"
   
 ```
 
-When you zoom in you will see shaded points. Points are brown where 
-populations are expected to decline by 50% or more within 3 generations (42 years).
-Brown points therefore represent rivers where the species is Endangered, 
-following the IUCN Redlist criteria - A3bd.
+When you zoom in you will see shaded points. The points follow rivers produced by
+remote sensing (Free-Flowing Rivers, 2019: https://doi.org/10.1038/s41586-019-1111-9)
+The points are brown where populations are predicted to decline by 50% 
+or more within 3 generations (42 years). Brown points therefore represent 
+rivers where the species is Endangered, following the IUCN Red List 
+population size reduction criteria - A3bd (https://www.iucnredlist.org/about/faqs).
 
-### River points Norris et. al. 2019
-Map below uses the river points from Norris et. al. 2019.
-```{r make-map-norris, echo=FALSE, message=FALSE, warning=FALSE}
+```{r make-map-norris, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
+#Map below uses the river points from Norris et. al. 2019.
 points_bau4326 <- points_bau |> 
   #filter(BASIN_N == "Orinoco") |>
   arrange(BASIN_N, SUBBASI, BB_ID, REACH_ID) |> 
@@ -175,14 +175,10 @@ group = "points_bau4326"
   
 ```
 
-When you zoom in you will see shaded points. Points are brown where 
-populations are expected to decline by 50% or more within 3 generations (42 years).
-Brown points therefore represent rivers where the species is Endangered, 
-following the IUCN Redlist criteria - A3bd.
 
-## Tables
-A summary of the results is presented below. Summaries by country and 
-major basin.
+## Summaries
+A summary of the results is presented below. This includes summaries 
+by country and major basin.
 
 ```{r totals-access, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
 # Check length of free flowing by Accessibility.
@@ -199,7 +195,8 @@ points_bau |>
 ```
 
 ### Summary by country.
-```{r totals-country, echo=FALSE, warning=FALSE, message=FALSE}
+```{r totals-country, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
+# Not used. Updated points from Norris et al. 2019.
 table_country <- points_bau |> 
   mutate(flag_ff = if_else(Free.flowing == "yes", 1, 0)) |>
   group_by(COUNTRY, Accessible) |> 
@@ -225,16 +222,44 @@ sumrow[1] <- "Total"
 # remove unwanted value
 sumrow[c(2, 3, 7)] <- NA
 ```
+```{r totals-country-ffr, echo=FALSE, warning=FALSE, message=FALSE}
+# All "yes". Need to revise and update.
+table_country_ffr <- points_bau_ffr |> 
+  mutate(flag_ff = if_else(Free.flowing == "yes", 1, 0)) |>
+  group_by(COUNTRY) |> 
+  mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
+  summarise(length_river = n(), 
+            length_end = sum((flag_e)), 
+           length_ff = sum(flag_ff), 
+           prop_ff = round((sum(flag_ff) / length_river), 2)) |> 
+    ungroup() |> 
+    mutate(length_not_end = length_river - length_end, 
+           prop_end = round((length_end / length_river), 2), 
+           length_not_ff = length_river - length_ff
+           
+) |> 
+  select(COUNTRY, prop_end, length_river, length_end, length_not_end, 
+         prop_ff, length_ff, length_not_ff)
 
-```{r make-table-country, echo=FALSE}
+# Sum rows of each column if numeric 
+func <- function(z) if (is.numeric(z)) sum(z) else '' 
+sumrow_ffr <- as.data.frame(lapply(table_country_ffr, func))
+# Give name to the first element of the new data frame created above
+sumrow_ffr[1] <- "Total"
+# remove unwanted value
+sumrow_ffr[c(2, 6)] <- NA
+```
+
+
+```{r make-table-country-ffr, echo=FALSE}
 options(knitr.kable.NA = '')
 
-bind_rows(table_country, sumrow) |> 
-  #select(COUNTRY, prop_end, length_river, length_end, length_not_end) |>
-knitr::kable(col.names = c("Country", "Accessible" ,"Endangered (prop)","river length (km)", 
-                           "length End.", "length not End.", 
-                           "Free Flowing (prop)", "length ff", "length not ff")) |> 
-  kableExtra::column_spec(3:9, width = "2.5cm")
+bind_rows(table_country_ffr, sumrow_ffr) |> 
+  select(COUNTRY, prop_end, length_river, length_end, length_not_end) |>
+knitr::kable(col.names = c("Country", "Endangered (prop)","river length (km)", 
+                           "length End.", "length not End.") 
+             )|> 
+  kableExtra::column_spec(3:5, width = "2.5cm")
              
 ```
 
