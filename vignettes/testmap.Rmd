@@ -17,7 +17,6 @@ knitr::opts_chunk$set(
 ## Load packages
 ```{r setup, warning=FALSE, message=FALSE}
 library(testmap)
-library(testmap)
 library(dplyr)
 library(sf)
 library(leaflet)
@@ -25,7 +24,7 @@ library(leafem)
 ```
 
 ## Make map
-This is a basic example which shows a map of where *Podocnemis unifilis* 
+This example shows a map of where *Podocnemis unifilis* 
 is Endangered in French Guiana. This country was chosen for illustrative 
 purposes because there are relatively few river points.
 
@@ -46,12 +45,15 @@ leaf_pal <- colorFactor(
 # interactive map. Options added to make panning smoother....
 leaflet::leaflet(points_bau4326, 
                  options = leafletOptions(preferCanvas = TRUE)) |> 
+# Basemap
   addTiles(options = tileOptions(
   updateWhenZooming = FALSE,      # map won't update tiles until zoom is done
   updateWhenIdle = TRUE)) |> 
+# Circles when zoom in.
   addCircles(color = ~leaf_pal(flag_50_42y), 
              group = "points_bau4326_low"
 ) |>  
+# Markers with cluster options for smoother panning.
   addCircleMarkers(color = ~leaf_pal(flag_50_42y), 
              stroke = FALSE, fillOpacity = 0.4, 
 clusterOptions = markerClusterOptions(), 

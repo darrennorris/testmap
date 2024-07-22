@@ -15,7 +15,10 @@ Suggests:
     leaflet, 
     leafem, 
     htmltools,
-    dplyr,
+    dplyr, 
+    ggplot2, 
+    patchwork, 
+    Hmisc,
     rmarkdown
 VignetteBuilder: knitr
 Depends: 

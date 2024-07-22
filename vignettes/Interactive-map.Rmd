@@ -31,12 +31,15 @@ library(testmap)
 
 ```{r load-packages, echo=FALSE, message=FALSE, warning=FALSE}
 library(dplyr)
+library(ggplot2)
 library(leaflet)
 library(leafem)
+library(Hmisc)
 library(sf)
 library(knitr)
 library(kableExtra)
-library(htmltools)
+library(htmltools) 
+library(patchwork)
 ```
 Use the interactive map below to check population changes. Zoom in to see 
 where *Podocnemis unilfilis* is Endangered based on IUCN Redlist criteria - A3bd.
@@ -271,7 +274,7 @@ table_basin_ffr <- points_bau_ffr |>
 
 ```{r make-table-basin-ffr, echo=FALSE}
 knitr::kable(table_basin_ffr, 
-             col.names = c("Basin", "Endangered (prop)","river length (km)", 
+             col.names = c("Basin", "population change","river length (km)", 
                            "length End.", "length not End.")) 
              
 ```
@@ -287,7 +290,8 @@ table_basin_country <- points_bau |>
     ungroup() |> 
     mutate(length_not_end = length_river - length_end, 
            prop_end = round((length_end / length_river), 2)) |> 
-  select(BASIN_N, COUNTRY, prop_end, length_river, length_end, length_not_end)
+  select(BASIN_N, COUNTRY, prop_end, length_river, length_end, length_not_end) 
+
 ```
 
 ```{r make-table-basin-country, echo=FALSE}
@@ -299,25 +303,97 @@ knitr::kable(table_basin_country,
              
 ```
 
-Same with Free-flowing rivers.....
-```{r totals-basin-country-ffr, echo=FALSE, message=FALSE, warning=FALSE}
-table_basin_country_ffr <- points_bau_ffr |> 
-  group_by(BASIN_NAME, COUNTRY) |> 
-  mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
-  summarise(length_river = n(), 
-            length_end = sum((flag_e))) |> 
-    ungroup() |> 
-    mutate(length_not_end = length_river - length_end, 
-           prop_end = round((length_end / length_river), 2)) |> 
-  select(BASIN_NAME, COUNTRY, prop_end, length_river, length_end, length_not_end)
+Same with Free-flowing rivers.....plot results
+```{r fig-basin-country-ffr}
+# Make summaries
+tab_sum <- points_bau_ffr |> 
+  dplyr::mutate(flag_EN = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
+  dplyr::group_by(COUNTRY, BASIN_NAME) |> 
+  dplyr::summarise(pop_start = sum(fem_t0), 
+                   pop_end = sum(fem_t42), 
+                   pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 3),
+                   diff_mean = mean(fem_diff_t42), 
+                   change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Lower"], 
+                   change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Upper"],
+                   diff_median = median(fem_diff_t42),
+                   diff_q25 = quantile(fem_diff_t42, probs = 0.25), 
+                   diff_q75 = quantile(fem_diff_t42, probs = 0.75),
+                   length_river = n(), 
+                   length_endangered = sum((flag_EN))) |>
+  dplyr::ungroup() |> 
+  dplyr::mutate(proportion_endangered = round((length_endangered / length_river), 2), 
+                length_label = round((length_river / 1000), 1)
+                ) |> 
+  dplyr::mutate(threat_status = case_when(diff_mean <= -0.8 ~ "Critically Endangered", 
+                                   diff_mean <= -0.5 ~ "Endangered", 
+                                   diff_mean <= -0.3 ~ "Vulnerable", 
+                                   diff_mean <= -0.2 ~ "Near Threatened")) 
+tab_sum$bc <- factor(paste(tab_sum$BASIN_NAME, tab_sum$COUNTRY, sep = "\n"))
+levels(tab_sum$bc)
+# Plot
+# check where these errors come from - 
+# Orinoco in Brazil, Orinoco in Guyana, Coastal South in French Guiana. 
+fig_left <- tab_sum |> 
+  filter(length_river > 21) |> 
+  droplevels() |> 
+  filter(BASIN_NAME %in% c("Amazon", "Coastal North")) |>
+ggplot(aes(x = COUNTRY, y = pop_change)) + 
+  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.2, ymax = -0.3),
+            fill="#F6DABF", alpha=0.2) + 
+  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.3, ymax = -0.5),
+            fill="#DEB688", alpha=0.2) + 
+  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.5, ymax = -0.8),
+            fill="#C09355", alpha=0.2) + 
+  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.8, ymax = -1),
+            fill="#A3720E", alpha=0.2) + 
+  geom_col(aes(fill = COUNTRY)) + 
+  geom_errorbar(aes(ymax = change_ucl_95, ymin = change_lcl_95), 
+                width = 0.2) + 
+  geom_label(aes(x = COUNTRY, y = 0.2, label = length_label)) +
+  scale_fill_grey() + 
+  facet_wrap(~BASIN_NAME, scales = "free_x", nrow = 2) +
+  theme_bw() + 
+  labs(y = "Population change", x = "") + 
+  #theme(legend.position = "bottom")
+  guides(fill = "none")
+fig_right <- tab_sum |> 
+  filter(length_river > 21) |> 
+  droplevels() |> 
+  filter(BASIN_NAME %in% c("Coastal South", "Orinoco")) |>
+ggplot(aes(x = COUNTRY, y = pop_change)) + 
+  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.2, ymax = -0.3),
+            fill="#F6DABF", alpha=0.2) + 
+  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.3, ymax = -0.5),
+            fill="#DEB688", alpha=0.2) + 
+  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.5, ymax = -0.8),
+            fill="#C09355", alpha=0.2) + 
+  geom_rect(data=NULL,aes(xmin=-Inf, xmax=Inf, ymin = -0.8, ymax = -1),
+            fill="#A3720E", alpha=0.2) + 
+  geom_col(aes(fill = COUNTRY)) + 
+  geom_errorbar(aes(ymax = change_ucl_95, ymin = change_lcl_95), 
+                width = 0.2) + 
+  geom_label(aes(x = COUNTRY, y = 0.2, label = length_label)) +
+  scale_fill_grey() + 
+  facet_wrap(~BASIN_NAME, scales = "free_x", nrow = 2) +
+  theme_bw() + 
+  labs(y = "", x = "") + 
+  #theme(legend.position = "bottom")
+  guides(fill = "none") 
+# put together
+fig_left + fig_right + plot_layout(widths = c(3, 1))
+
 ```
 
+
+Table showing data values used in graph.
+
 ```{r make-table-basin-country-ffr, echo=FALSE}
-knitr::kable(table_basin_country_ffr, 
-             col.names = c("Basin", "Country","Endangered (prop)", 
-                           "river length (km)", 
-                           "length End.", "length not End.")) |> 
-  kableExtra::column_spec(3:6, width = "3cm")
+tab_sum |> 
+  select(BASIN_NAME, COUNTRY, pop_change, length_river) |> 
+  arrange(BASIN_NAME, COUNTRY) |>
+knitr::kable(col.names = c("Basin", "Country", "population change", 
+                           "river length (km)")) |> 
+  kableExtra::column_spec(3:4, width = "3cm")
              
 ```
 
