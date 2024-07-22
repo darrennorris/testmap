@@ -331,7 +331,7 @@ knitr::kable(table_basin_country,
 ```
 
 Same with Free-flowing rivers.....plot results
-```{r fig-basin-country-ffr}
+```{r data-basin-country-ffr}
 # Make summaries
 tab_sum <- points_bau_ffr |> 
   dplyr::mutate(flag_EN = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
@@ -356,7 +356,11 @@ tab_sum <- points_bau_ffr |>
                                    diff_mean <= -0.3 ~ "Vulnerable", 
                                    diff_mean <= -0.2 ~ "Near Threatened")) 
 tab_sum$bc <- factor(paste(tab_sum$BASIN_NAME, tab_sum$COUNTRY, sep = "\n"))
-levels(tab_sum$bc)
+# levels(tab_sum$bc)
+
+```
+
+```{r fig-basin-country-ffr, echo=FALSE}
 # Plot
 # check where these errors come from - 
 # Orinoco in Brazil, Orinoco in Guyana, Coastal South in French Guiana. 
@@ -410,7 +414,6 @@ ggplot(aes(x = COUNTRY, y = pop_change)) +
 fig_left + fig_right + plot_layout(widths = c(3, 1))
 
 ```
-
 
 Table showing data values used in graph.
 
