@@ -291,17 +291,21 @@ Same using Free-flowing rivers data.
 table_basin_ffr <- points_bau_ffr |> 
   group_by(BASIN_NAME) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
-  summarise(length_river = n(), 
+  summarise(pop_start = sum(fem_t0), 
+            pop_end = sum(fem_t42), 
+            pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 3),
+            length_river = n(), 
             length_end = sum((flag_e))) |> 
     ungroup() |> 
     mutate(length_not_end = length_river - length_end, 
            prop_end = round((length_end / length_river), 2)) |> 
-  select(BASIN_NAME, prop_end, length_river, length_end, length_not_end)
+  select(BASIN_NAME, pop_change, prop_end, length_river, length_end, length_not_end)
 ```
 
 ```{r make-table-basin-ffr, echo=FALSE}
 knitr::kable(table_basin_ffr, 
-             col.names = c("Basin", "population change","river length (km)", 
+             col.names = c("Basin", "population change", 
+                           "Endangered (prop)","river length (km)", 
                            "length End.", "length not End.")) 
              
 ```
@@ -377,6 +381,7 @@ ggplot(aes(x = COUNTRY, y = pop_change)) +
             fill="#C09355", geom = 'rect', alpha=0.4) + 
   annotate(xmin=-Inf, xmax=Inf, ymin = -0.8, ymax = -1,
             fill="#A3720E", geom = 'rect', alpha=0.4) + 
+  geom_hline(yintercept = 0, colour = "black") +
   geom_col(aes(fill = COUNTRY)) + 
   geom_errorbar(aes(ymax = change_ucl_95, ymin = change_lcl_95), 
                 width = 0.2) + 
@@ -400,6 +405,7 @@ ggplot(aes(x = COUNTRY, y = pop_change)) +
             fill="#C09355", geom = 'rect', alpha=0.4) + 
   annotate(xmin=-Inf, xmax=Inf, ymin = -0.8, ymax = -1,
             fill="#A3720E", geom = 'rect', alpha=0.4) + 
+  geom_hline(yintercept = 0, colour = "black") +
   geom_col(aes(fill = COUNTRY)) + 
   geom_errorbar(aes(ymax = change_ucl_95, ymin = change_lcl_95), 
                 width = 0.2) + 
