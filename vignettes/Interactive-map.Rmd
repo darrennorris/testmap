@@ -177,8 +177,14 @@ group = "points_bau4326"
 
 
 ## Summaries
-A summary of the results is presented below. This includes summaries 
-by country and major basin.
+A summary of the map results is presented below. This includes summaries 
+by country and major basin. Results include the size and extent of likely
+population changes. The column "population change" is the difference in
+the number of adult females after 3 generations (42 years). This is consistent 
+with the population sze reduction criteria used by the IUCN Red List. The 
+column "River length Endangered", is the proportion of river length where 
+populations declined by 50% or more, and represents the spatial extent of 
+future changes. 
 
 ```{r totals-access, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
 # Check length of free flowing by Accessibility.
@@ -222,6 +228,8 @@ sumrow[1] <- "Total"
 # remove unwanted value
 sumrow[c(2, 3, 7)] <- NA
 ```
+
+
 ```{r totals-country-ffr, echo=FALSE, warning=FALSE, message=FALSE}
 # All "yes". Need to revise and update.
 table_country_ffr <- points_bau_ffr |> 
@@ -256,18 +264,21 @@ sumrow_ffr[c(2, 3, 7)] <- NA
 options(knitr.kable.NA = '')
 
 bind_rows(table_country_ffr, sumrow_ffr) |> 
-  select(COUNTRY, pop_change, prop_end, length_river, length_end, length_not_end) |>
+  select(COUNTRY, pop_change, prop_end, length_river) |>
 knitr::kable(col.names = c("Country", "Population change", 
-                           "Endangered (prop)","river length (km)", 
-                           "length End.", "length not End.") 
+                           "River length Endangered (prop)", 
+                           "River length (km)") 
              )|> 
-  kableExtra::column_spec(3:6, width = "2.5cm")
+  kableExtra::column_spec(3:4, width = "3.0cm")
              
 ```
 
+
+
 ### Summary by basin.
-Using results from updated Norris et. al. 2019.
-```{r totals-basin, echo=FALSE, message=FALSE, warning=FALSE}
+
+```{r totals-basin, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
+# Not used. Results from updated Norris et. al. 2019.
 table_basin <- points_bau |> 
   group_by(BASIN_N) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
@@ -280,14 +291,14 @@ table_basin <- points_bau |>
   select(BASIN_N, pop_change, prop_end, length_river, length_end, length_not_end)
 ```
 
-```{r make-table-basin, echo=FALSE}
+```{r make-table-basin, echo=FALSE, eval=FALSE}
 knitr::kable(table_basin, 
              col.names = c("Basin", "Population change", "Endangered (prop)","river length (km)", 
                            "length End.", "length not End.")) 
              
 ```
 
-Same using Free-flowing rivers data.
+
 ```{r totals-basin-ffr, echo=FALSE, message=FALSE, warning=FALSE}
 table_basin_ffr <- points_bau_ffr |> 
   group_by(BASIN_NAME) |> 
@@ -304,16 +315,18 @@ table_basin_ffr <- points_bau_ffr |>
 ```
 
 ```{r make-table-basin-ffr, echo=FALSE}
-knitr::kable(table_basin_ffr, 
-             col.names = c("Basin", "population change", 
-                           "Endangered (prop)","river length (km)", 
-                           "length End.", "length not End.")) 
+table_basin_ffr |> 
+  select(BASIN_NAME, pop_change, prop_end, length_river) |>
+knitr::kable(col.names = c("Basin", "population change", 
+                           "River length Endangered (prop)", 
+                           "River length (km)")) 
              
 ```
 
 
 ### Summary by major basins and countries.
-```{r totals-basin-country, echo=FALSE, message=FALSE, warning=FALSE}
+```{r totals-basin-country, eval = FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+# Not used.
 table_basin_country <- points_bau |> 
   group_by(BASIN_N, COUNTRY) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
@@ -327,7 +340,7 @@ table_basin_country <- points_bau |>
 
 ```
 
-```{r make-table-basin-country, echo=FALSE}
+```{r make-table-basin-country, echo=FALSE, eval=FALSE}
 knitr::kable(table_basin_country, 
              col.names = c("Basin", "Country", 
                            "Population change","Endangered (prop)", 
@@ -367,6 +380,23 @@ tab_sum$bc <- factor(paste(tab_sum$BASIN_NAME, tab_sum$COUNTRY, sep = "\n"))
 
 ```
 
+
+```{r make-table-basin-country-ffr, echo=FALSE}
+tab_sum |> 
+  filter(length_river > 21) |> 
+  droplevels() |>
+  select(BASIN_NAME, COUNTRY, pop_change, proportion_endangered, 
+         length_river) |> 
+  arrange(BASIN_NAME, COUNTRY) |>
+knitr::kable(col.names = c("Basin", "Country", "population change", 
+                           "River length Endangered (prop)", 
+                           "river length (km)")) |> 
+  kableExtra::column_spec(3:5, width = "3cm")
+             
+```
+
+The table values can also be presented graphically.
+This enables a more comprehensive understanding of the patterns.
 ```{r fig-basin-country-ffr, echo=FALSE}
 # Plot
 # check where these errors come from - 
@@ -424,23 +454,7 @@ fig_left + fig_right + plot_layout(widths = c(3, 1))
 
 ```
 
-Table showing data values used in graph.
-
-```{r make-table-basin-country-ffr, echo=FALSE}
-tab_sum |> 
-  filter(length_river > 21) |> 
-  droplevels() |>
-  select(BASIN_NAME, COUNTRY, pop_change, proportion_endangered, 
-         length_river) |> 
-  arrange(BASIN_NAME, COUNTRY) |>
-knitr::kable(col.names = c("Basin", "Country", "population change", 
-                           "Endangered (prop)", "river length (km)")) |> 
-  kableExtra::column_spec(3:5, width = "3cm")
-             
-```
-
 
 ## Next steps
 
- - Update using points from Free Flowing Rivers    
- <https://www.worldwildlife.org/pages/free-flowing-rivers>
+ - Consultate with researchers to check and validate the mapped results.

@@ -24,6 +24,10 @@ knitr::opts_chunk$set(
 The goal of testmap is to map future population changes of 
 the Yellow-spotted river turtle (*Podocnemis unifilis*).
 
+The predicted future changes are from female-only, 
+stochastic stage-based matrix population projection models, developed here: 
+https://github.com/darrennorris/TACAR
+
 ## Objectives
 These maps are being used to
 
@@ -54,9 +58,10 @@ remotes::install_github("darrennorris/testmap")
 
 ## Example
 
-This is a basic example which shows a summary of 
-where *Podocnemis unifilis* is Endangered in different countries.  
-Another example with code to make a map is here: 
+This example shows a summary of 
+future changes to *Podocnemis unifilis* populations in different countries.  
+Another example showing where *Podocnemis unifilis* is 
+Endangered is here: 
 https://darrennorris.github.io/testmap/articles/testmap.html
 
 ```{r example, warning=FALSE, message=FALSE}
