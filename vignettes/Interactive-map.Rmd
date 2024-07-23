@@ -276,7 +276,9 @@ knitr::kable(col.names = c("Country", "Population change",
 
 
 ### Summary by basin.
-
+In the table below "Amazon" includes the Amazon Basin together 
+with the Araguaia-Tocantins Basin in Brazil. "Coastal North" includes 
+the Essequibo Basin. 
 ```{r totals-basin, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
 # Not used. Results from updated Norris et. al. 2019.
 table_basin <- points_bau |> 
@@ -350,8 +352,8 @@ knitr::kable(table_basin_country,
              
 ```
 
-Same with Free-flowing rivers.....plot results
-```{r data-basin-country-ffr}
+
+```{r data-basin-country-ffr, echo=FALSE}
 # Make summaries
 tab_sum <- points_bau_ffr |> 
   dplyr::mutate(flag_EN = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
@@ -397,6 +399,7 @@ knitr::kable(col.names = c("Basin", "Country", "population change",
 
 The table values can also be presented graphically.
 This enables a more comprehensive understanding of the patterns.
+
 ```{r fig-basin-country-ffr, echo=FALSE}
 # Plot
 # check where these errors come from - 
@@ -453,6 +456,7 @@ ggplot(aes(x = COUNTRY, y = pop_change)) +
 fig_left + fig_right + plot_layout(widths = c(3, 1))
 
 ```
+
 
 
 ## Next steps
