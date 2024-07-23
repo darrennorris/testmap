@@ -41,6 +41,23 @@ library(kableExtra)
 library(htmltools) 
 library(patchwork)
 ```
+
+```{r main-result, echo=FALSE}
+tot_t0 <- sum(points_bau_ffr$fem_t0)
+tot_t42 <- floor(sum(points_bau_ffr$fem_t42))
+pop_change_42 <- (tot_t42 - tot_t0) / tot_t0 
+change_value <- round(abs(pop_change_42) * 100, 1)
+diff_boot <- Hmisc::smean.cl.boot(points_bau_ffr$fem_diff_t42)
+pop_change_42_lcl <- diff_boot["Lower"]
+pop_change_42_ucl <- diff_boot["Upper"]
+pop_change_42_q25 <- quantile(points_bau_ffr$fem_diff_t42, probs =0.25)
+pop_change_42_q75 <- quantile(points_bau_ffr$fem_diff_t42, probs =0.75)
+
+# Bootstrap resample to get quantile distribution.
+
+```
+
+
 Use the interactive map below to check population changes. Zoom in to see 
 where *Podocnemis unilfilis* is Endangered based on IUCN Red List criteria - A3bd.
 
@@ -48,6 +65,9 @@ This is an extension of [Norris et. al. 2019](https://doi.org/10.1016/j.biocon.2
 
 - Stochastic population projections. 
 - Future impacts to populations caused by human acessibility (hunting and habitat change) and actions that reduce river connectivity.
+
+Overall the adult female population is predicted to decline by `r change_value`%
+in the future.
 
 ## Map
 Due to the number of points, the map can become slow to respond when you zoom in.
@@ -353,7 +373,7 @@ knitr::kable(table_basin_country,
 ```
 
 
-```{r data-basin-country-ffr, echo=FALSE}
+```{r data-basin-country-ffr, echo=FALSE, message=FALSE, warning=FALSE}
 # Make summaries
 tab_sum <- points_bau_ffr |> 
   dplyr::mutate(flag_EN = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
@@ -396,6 +416,7 @@ knitr::kable(col.names = c("Basin", "Country", "population change",
   kableExtra::column_spec(3:5, width = "3cm")
              
 ```
+
 
 The table values can also be presented graphically.
 This enables a more comprehensive understanding of the patterns.
