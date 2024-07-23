@@ -88,7 +88,7 @@ This is an extension of [Norris et. al. 2019](https://doi.org/10.1016/j.biocon.2
 - Future impacts to populations caused by human acessibility (hunting and habitat change) and actions that reduce river connectivity.
 
 Overall the adult female population is predicted to decline by `r change_value`%
-in the future (25 and 75% quantiles: `r q25_value` - `r q75_value`.
+in the future (25 and 75% quantiles: `r q25_value` - `r q75_value` % decline).
 
 ## Map
 Due to the number of points, the map can become slow to respond when you zoom in.
