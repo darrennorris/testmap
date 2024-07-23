@@ -15,10 +15,10 @@ points_bau <- inpoints |>
   select(BASIN_N, subbasn, SUBBASI,
          BAS_NAME, COUNTRY, RIV_ORD, BB_ID, BB_NAME, REACH_ID,
          Protected, Accessible, Free.flowing,
-         fem_diff_t42, flag_50_42y,
+         fem_t0, fem_t42, fem_diff_t42, flag_50_42y,
          geometry) |>
   sf::st_as_sf()
-st_crs(points_bau) <- NA
+sf::st_crs(points_bau) <- NA
 points_bau <- points_bau |> data.frame()
 # export
 usethis::use_data(points_bau, overwrite = TRUE)

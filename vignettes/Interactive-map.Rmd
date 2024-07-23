@@ -271,17 +271,18 @@ Using results from updated Norris et. al. 2019.
 table_basin <- points_bau |> 
   group_by(BASIN_N) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
-  summarise(length_river = n(), 
+  summarise(pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 3), 
+            length_river = n(), 
             length_end = sum((flag_e))) |> 
     ungroup() |> 
     mutate(length_not_end = length_river - length_end, 
            prop_end = round((length_end / length_river), 2)) |> 
-  select(BASIN_N, prop_end, length_river, length_end, length_not_end)
+  select(BASIN_N, pop_change, prop_end, length_river, length_end, length_not_end)
 ```
 
 ```{r make-table-basin, echo=FALSE}
 knitr::kable(table_basin, 
-             col.names = c("Basin", "Endangered (prop)","river length (km)", 
+             col.names = c("Basin", "Population change", "Endangered (prop)","river length (km)", 
                            "length End.", "length not End.")) 
              
 ```
@@ -316,21 +317,23 @@ knitr::kable(table_basin_ffr,
 table_basin_country <- points_bau |> 
   group_by(BASIN_N, COUNTRY) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
-  summarise(length_river = n(), 
+  summarise(pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 3), 
+            length_river = n(), 
             length_end = sum((flag_e))) |> 
     ungroup() |> 
     mutate(length_not_end = length_river - length_end, 
            prop_end = round((length_end / length_river), 2)) |> 
-  select(BASIN_N, COUNTRY, prop_end, length_river, length_end, length_not_end) 
+  select(BASIN_N, COUNTRY, pop_change, prop_end, length_river, length_end, length_not_end) 
 
 ```
 
 ```{r make-table-basin-country, echo=FALSE}
 knitr::kable(table_basin_country, 
-             col.names = c("Basin", "Country","Endangered (prop)", 
+             col.names = c("Basin", "Country", 
+                           "Population change","Endangered (prop)", 
                            "river length (km)", 
                            "length End.", "length not End.")) |> 
-  kableExtra::column_spec(3:6, width = "3cm")
+  kableExtra::column_spec(3:7, width = "3cm")
              
 ```
 
@@ -427,11 +430,12 @@ Table showing data values used in graph.
 tab_sum |> 
   filter(length_river > 21) |> 
   droplevels() |>
-  select(BASIN_NAME, COUNTRY, pop_change, length_river) |> 
+  select(BASIN_NAME, COUNTRY, pop_change, proportion_endangered, 
+         length_river) |> 
   arrange(BASIN_NAME, COUNTRY) |>
 knitr::kable(col.names = c("Basin", "Country", "population change", 
-                           "river length (km)")) |> 
-  kableExtra::column_spec(3:4, width = "3cm")
+                           "Endangered (prop)", "river length (km)")) |> 
+  kableExtra::column_spec(3:5, width = "3cm")
              
 ```
 
