@@ -58,6 +58,7 @@
 <!-- badges: start -->
 
 <p>The goal of testmap is to map future population changes of the Yellow-spotted river turtle (<em>Podocnemis unifilis</em>).</p>
+<p>The predicted future changes are from female-only, stochastic stage-based matrix population projection models, developed here: <a href="https://github.com/darrennorris/TACAR" class="external-link uri">https://github.com/darrennorris/TACAR</a></p>
 <div class="section level2">
 <h2 id="objectives">Objectives<a class="anchor" aria-label="anchor" href="#objectives"></a>
 </h2>
@@ -89,8 +90,8 @@ Predicted changes after 42 years: <a href="https://darrennorris.github.io/testma
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>This is a basic example which shows a summary of where <em>Podocnemis unifilis</em> is Endangered in different countries.<br>
-Another example with code to make a map is here: <a href="https://darrennorris.github.io/testmap/articles/testmap.html" class="uri">https://darrennorris.github.io/testmap/articles/testmap.html</a></p>
+<p>This example shows a summary of future changes to <em>Podocnemis unifilis</em> populations in different countries.<br>
+Another example showing where <em>Podocnemis unifilis</em> is Endangered is here: <a href="https://darrennorris.github.io/testmap/articles/testmap.html" class="uri">https://darrennorris.github.io/testmap/articles/testmap.html</a></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/darrennorris/testmap" class="external-link">testmap</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
@@ -115,11 +116,11 @@ Another example with code to make a map is here: <a href="https://darrennorris.g
 <span><span class="co">#&gt; # A tibble: 9 × 10</span></span>
 <span><span class="co">#&gt;   COUNTRY  pop_start pop_end pop_change change_lcl_95 change_ucl_95 length_river</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;        &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1 Bolivia     222170  94300.     -0.576        -0.583        -0.568        22217</span></span>
+<span><span class="co">#&gt; 1 Bolivia     222170  94300.     -0.576        -0.584        -0.567        22217</span></span>
 <span><span class="co">#&gt; 2 Brazil     1905550 712133.     -0.626        -0.629        -0.624       190555</span></span>
-<span><span class="co">#&gt; 3 Colombia    385520 199290.     -0.483        -0.489        -0.477        38552</span></span>
-<span><span class="co">#&gt; 4 Ecuador      83020  18194.     -0.781        -0.791        -0.770         8302</span></span>
-<span><span class="co">#&gt; 5 French …     32980  17147.     -0.48         -0.502        -0.458         3298</span></span>
+<span><span class="co">#&gt; 3 Colombia    385520 199290.     -0.483        -0.490        -0.477        38552</span></span>
+<span><span class="co">#&gt; 4 Ecuador      83020  18194.     -0.781        -0.790        -0.771         8302</span></span>
+<span><span class="co">#&gt; 5 French …     32980  17147.     -0.48         -0.503        -0.457         3298</span></span>
 <span><span class="co">#&gt; 6 Guyana       73720  55397.     -0.249        -0.264        -0.234         7372</span></span>
 <span><span class="co">#&gt; 7 Peru        473630 149614.     -0.684        -0.689        -0.679        47363</span></span>
 <span><span class="co">#&gt; 8 Suriname     57560  42552.     -0.261        -0.279        -0.244         5756</span></span>
