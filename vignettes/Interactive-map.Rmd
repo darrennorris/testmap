@@ -533,8 +533,8 @@ fig_left + fig_right + plot_layout(widths = c(3, 1))
 ```
 
 Columns show predicted population changes for each basin country combination.
-The backgrouund shading follows a gradient from Near Threatened (-0.2 / 20% loss) to 
-Critically Endangered (-0.8, 80% loss). 
+The backgrouund shading follows a gradient from Near Threatened (-0.2 is 20% loss) to 
+Critically Endangered (-0.8 is 80% loss). 
 The width of columns is proportional to the river length on a log scale 
 (labels show river lengths in thousands of kilometers).
 
