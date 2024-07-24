@@ -438,7 +438,7 @@ tab_sum <- points_bau_ffr |>
                 change_label = paste(pop_change, " (", round(change_lcl_95, 2), " ", 
                                 "\u2013", " ", round(change_ucl_95, 2), ")", sep="")
            ) 
-tab_sum$bc <- factor(paste(tab_sum$BASIN_NAME, tab_sum$COUNTRY, sep = "\n"))
+#tab_sum$bc <- factor(paste(tab_sum$BASIN_NAME, tab_sum$COUNTRY, sep = "\n"))
 # levels(tab_sum$bc)
 
 ```
@@ -464,13 +464,26 @@ This enables a more comprehensive understanding of the patterns.
 
 ```{r fig-basin-country-ffr, echo=FALSE}
 # Plot
+# Add width factor and fill colour to be consistent across graphs.
+mycountry <- sort(unique(tab_sum$COUNTRY))
+ncountry <- length(unique(tab_sum$COUNTRY))
+palette_country <- grey.colors(n = ncountry)
+tab_bc <- tab_sum |> 
+  filter(length_river > 21) |> 
+  droplevels() |>
+  left_join(data.frame(COUNTRY = mycountry, 
+                       my_fill = palette_country))
+# Now include width factor to be conistent across facets
+tab_bc <- tab_bc |> left_join(tab_bc |> 
+  group_by(BASIN_NAME) |> summarise(country_count = n()) |> 
+  ungroup() |> mutate(width_fac = country_count / max(country_count)) 
+)
+
 # check where these errors come from - 
 # Orinoco in Brazil, Orinoco in Guyana, Coastal South in French Guiana. 
-fig_left <- tab_sum |> 
-  filter(length_river > 21) |> 
-  droplevels() |> 
+fig_left <- tab_bc |> 
   filter(BASIN_NAME %in% c("Amazon", "Coastal North")) |>
-ggplot(aes(x = COUNTRY, y = pop_change)) + 
+ggplot(aes(x = COUNTRY, y = pop_change, width = .85*width_fac)) + 
   annotate(xmin=-Inf, xmax=Inf, ymin = -0.2, ymax = -0.3,
             fill="#F6DABF", geom = 'rect', alpha=0.4) + 
   annotate(xmin=-Inf, xmax=Inf, ymin = -0.3, ymax = -0.5,
@@ -480,21 +493,20 @@ ggplot(aes(x = COUNTRY, y = pop_change)) +
   annotate(xmin=-Inf, xmax=Inf, ymin = -0.8, ymax = -1,
             fill="#A3720E", geom = 'rect', alpha=0.4) + 
   geom_hline(yintercept = 0, colour = "black") +
-  geom_col(aes(fill = COUNTRY)) + 
+  geom_col(aes(fill = my_fill)) + 
   geom_errorbar(aes(ymax = change_ucl_95, ymin = change_lcl_95), 
                 width = 0.2) + 
   geom_label(aes(x = COUNTRY, y = 0.2, label = length_label)) +
-  scale_fill_grey() + 
+  scale_fill_identity() +  
   facet_wrap(~BASIN_NAME, scales = "free_x", nrow = 2) +
   theme_bw() + 
   labs(y = "Population change", x = "") + 
   #theme(legend.position = "bottom")
   guides(fill = "none")
-fig_right <- tab_sum |> 
-  filter(length_river > 21) |> 
-  droplevels() |> 
+
+fig_right <- tab_bc |> 
   filter(BASIN_NAME %in% c("Coastal South", "Orinoco")) |>
-ggplot(aes(x = COUNTRY, y = pop_change)) + 
+ggplot(aes(x = COUNTRY, y = pop_change, width = .85*(width_fac*3))) + 
   annotate(xmin=-Inf, xmax=Inf, ymin = -0.2, ymax = -0.3,
             fill="#F6DABF", geom = 'rect', alpha=0.4) + 
   annotate(xmin=-Inf, xmax=Inf, ymin = -0.3, ymax = -0.5,
@@ -504,11 +516,11 @@ ggplot(aes(x = COUNTRY, y = pop_change)) +
   annotate(xmin=-Inf, xmax=Inf, ymin = -0.8, ymax = -1,
             fill="#A3720E", geom = 'rect', alpha=0.4) + 
   geom_hline(yintercept = 0, colour = "black") +
-  geom_col(aes(fill = COUNTRY)) + 
+  geom_col(aes(fill = my_fill)) + 
   geom_errorbar(aes(ymax = change_ucl_95, ymin = change_lcl_95), 
                 width = 0.2) + 
-  geom_label(aes(x = COUNTRY, y = 0.2, label = length_label)) +
-  scale_fill_grey() + 
+  geom_label(aes(x = COUNTRY, y = 0.2, label = length_label)) + 
+  scale_fill_identity() + 
   facet_wrap(~BASIN_NAME, scales = "free_x", nrow = 2) +
   theme_bw() + 
   labs(y = "", x = "") + 
