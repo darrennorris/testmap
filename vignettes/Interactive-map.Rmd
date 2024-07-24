@@ -5,6 +5,8 @@ vignette: >
   %\VignetteIndexEntry{Interactive-map}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+pkgdown:
+  as_is: true
 ---
 
 ```{r, include = FALSE}
@@ -85,13 +87,6 @@ where *Podocnemis unilfilis* is Endangered based on IUCN Red List criteria - A3b
 size reduction criteria. 
 The adult female population is predicted to decline by `r change_value`%
 in the future (25 and 75% quantile range: `r q25_value` - `r q75_value` % decline).
-
-The analysis is developed here: https://github.com/darrennorris/TACAR, 
-and is an extension of [Norris et. al. 2019](https://doi.org/10.1016/j.biocon.2019.02.022) that includes:
-
-- Stochastic population projections. 
-- Future impacts to populations caused by human acessibility (hunting) and actions that reduce river connectivity.
-
 
 ## Map
 Due to the number of points, the map can become slow to respond when you zoom in.
@@ -220,6 +215,14 @@ group = "points_bau4326"
   
   
 ```
+
+
+## Methods
+The analysis is developed here: https://github.com/darrennorris/TACAR, 
+and is an extension of [Norris et. al. 2019](https://doi.org/10.1016/j.biocon.2019.02.022) that includes:
+
+- Stochastic population projections. 
+- Future impacts to populations caused by human acessibility (hunting) and actions that reduce river connectivity.
 
 
 ## Summaries
@@ -385,7 +388,7 @@ knitr::kable(col.names = c("Basin", "population change",
 
 
 ### Summary by major basins and countries.
-```{r totals-basin-country, eval = FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+```{r totals-basin-country, eval = FALSE, echo=FALSE, message=FALSE, warning=FALSE, }
 # Not used.
 table_basin_country <- points_bau |> 
   group_by(BASIN_N, COUNTRY) |> 
@@ -462,7 +465,7 @@ knitr::kable(col.names = c("Basin", "Country", "population change",
 The table values can also be presented graphically.
 This enables a more comprehensive understanding of the patterns.
 
-```{r fig-basin-country-ffr, echo=FALSE, message=FALSE, warning=FALSE}
+```{r fig-basin-country-ffr, fig.cap = "Population changes across basins and contries", echo=FALSE, message=FALSE, warning=FALSE}
 # Plot
 # Add width ajustment factor and fill colour to be consistent across graphs.
 mycountry <- sort(unique(tab_sum$COUNTRY))
@@ -532,11 +535,12 @@ fig_left + fig_right + plot_layout(widths = c(3, 1))
 
 ```
 
-Columns show predicted population changes for each basin country combination.
+Columns show predicted population changes for each basin country combination \@ref(fig:fig-basin-country-ffr).
 The background shading follows a gradient from Near Threatened (-0.2 is 20% loss) to 
 Critically Endangered (-0.8 is 80% loss). 
-The width of columns is proportional to the river length on a log scale 
-(labels show river lengths in thousands of kilometers).
+The width of columns is proportional to the river length on a log scale. 
+The labels above each column show river lengths in thousands of 
+kilometers (e.g. 22.2 is 22,200 kilometers).
 
 ## Next steps
 
