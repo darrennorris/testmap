@@ -141,7 +141,9 @@ group = "points_bau4326"
 ```
 
 When you zoom in you will see shaded points. The points follow rivers produced by
-remote sensing (Free-Flowing Rivers, 2019: https://doi.org/10.1038/s41586-019-1111-9)
+remote sensing (Free-flowing Rivers, 2019: https://doi.org/10.1038/s41586-019-1111-9). 
+To facilitate online viewing the mapped points are a subset at intervals 
+of approximately 10 kilometers.
 The points are brown where populations are predicted to decline by 50% 
 or more within 3 generations (42 years). Brown points therefore represent 
 rivers where the species is Endangered, following the IUCN Red List 
@@ -221,7 +223,8 @@ group = "points_bau4326"
 
 ## Summaries
 A summary of the map results is presented below. This includes summaries 
-by country and major basin. Results include the size and extent of likely
+by country and major basin using the full set of points at 1 kilometer 
+intervals. Results include the size and extent of likely
 population changes. The column "population change" is the difference in
 the number of adult females after 3 generations (42 years). This is consistent 
 with the population sze reduction criteria used by the IUCN Red List. The 
