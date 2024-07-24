@@ -462,9 +462,9 @@ knitr::kable(col.names = c("Basin", "Country", "population change",
 The table values can also be presented graphically.
 This enables a more comprehensive understanding of the patterns.
 
-```{r fig-basin-country-ffr, echo=FALSE}
+```{r fig-basin-country-ffr, echo=FALSE, message=FALSE, warning=FALSE}
 # Plot
-# Add width factor and fill colour to be consistent across graphs.
+# Add width ajustment factor and fill colour to be consistent across graphs.
 mycountry <- sort(unique(tab_sum$COUNTRY))
 ncountry <- length(unique(tab_sum$COUNTRY))
 palette_country <- grey.colors(n = ncountry)
@@ -478,12 +478,13 @@ tab_bc <- tab_bc |> left_join(tab_bc |>
   group_by(BASIN_NAME) |> summarise(country_count = n()) |> 
   ungroup() |> mutate(width_fac = country_count / max(country_count)) 
 )
-
+tab_bc$river_log <- log1p((tab_bc$length_river/1000))
+tab_bc$river_fac <- tab_bc$river_log / max(tab_bc$river_log)
 # check where these errors come from - 
 # Orinoco in Brazil, Orinoco in Guyana, Coastal South in French Guiana. 
 fig_left <- tab_bc |> 
   filter(BASIN_NAME %in% c("Amazon", "Coastal North")) |>
-ggplot(aes(x = COUNTRY, y = pop_change, width = .85*width_fac)) + 
+ggplot(aes(x = COUNTRY, y = pop_change, width = (.85 * river_fac)*width_fac)) + 
   annotate(xmin=-Inf, xmax=Inf, ymin = -0.2, ymax = -0.3,
             fill="#F6DABF", geom = 'rect', alpha=0.4) + 
   annotate(xmin=-Inf, xmax=Inf, ymin = -0.3, ymax = -0.5,
@@ -506,7 +507,7 @@ ggplot(aes(x = COUNTRY, y = pop_change, width = .85*width_fac)) +
 
 fig_right <- tab_bc |> 
   filter(BASIN_NAME %in% c("Coastal South", "Orinoco")) |>
-ggplot(aes(x = COUNTRY, y = pop_change, width = .85*(width_fac*3))) + 
+ggplot(aes(x = COUNTRY, y = pop_change, width = (.85 * river_fac)*(width_fac*3))) + 
   annotate(xmin=-Inf, xmax=Inf, ymin = -0.2, ymax = -0.3,
             fill="#F6DABF", geom = 'rect', alpha=0.4) + 
   annotate(xmin=-Inf, xmax=Inf, ymin = -0.3, ymax = -0.5,
@@ -531,7 +532,11 @@ fig_left + fig_right + plot_layout(widths = c(3, 1))
 
 ```
 
-
+Columns show predicted population changes for each basin country combination.
+The backgrouund shading follows a gradient from Near Threatened (-0.2 / 20% loss) to 
+Critically Endangered (-0.8, 80% loss). 
+The width of columns is proportional to the river length on a log scale 
+(labels show river lengths in thousands of kilometers).
 
 ## Next steps
 
