@@ -81,7 +81,8 @@ q75_value <- round(abs(pop_change_42_q75) * 100, 1)
 Use the interactive map below to check population changes. Zoom in to see 
 where *Podocnemis unilfilis* is Endangered based on IUCN Red List criteria - A3bd.
 
-- Overall *Podocnemis unilfilis* is Endangered based on future population size reduction. 
+- Overall *Podocnemis unilfilis* is Endangered based on future population 
+size reduction criteria. 
 The adult female population is predicted to decline by `r change_value`%
 in the future (25 and 75% quantile range: `r q25_value` - `r q75_value` % decline).
 
@@ -277,12 +278,14 @@ sumrow[c(2, 3, 7)] <- NA
 
 
 ```{r totals-country-ffr, echo=FALSE, warning=FALSE, message=FALSE}
-# All "yes". Need to revise and update.
+# All FFR "yes". Need to revise and update.
 table_country_ffr <- points_bau_ffr |> 
   mutate(flag_ff = if_else(Free.flowing == "yes", 1, 0)) |>
   group_by(COUNTRY) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
-  summarise(pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 3), 
+  summarise(pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 2), 
+            change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Lower"], 
+            change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Upper"],
             length_river = n(), 
             length_end = sum((flag_e)), 
            length_ff = sum(flag_ff), 
@@ -290,10 +293,12 @@ table_country_ffr <- points_bau_ffr |>
     ungroup() |> 
     mutate(length_not_end = length_river - length_end, 
            prop_end = round((length_end / length_river), 2), 
-           length_not_ff = length_river - length_ff
+           length_not_ff = length_river - length_ff, 
+           change_label = paste(pop_change, " (", round(change_lcl_95, 2), " ", 
+                                "\u2013", " ", round(change_ucl_95, 2), ")", sep="")
            
 ) |> 
-  select(COUNTRY, pop_change, prop_end, length_river, length_end, length_not_end, 
+  select(COUNTRY, change_label, prop_end, length_river, length_end, length_not_end, 
          prop_ff, length_ff, length_not_ff)
 
 # Sum rows of each column if numeric 
@@ -302,7 +307,7 @@ sumrow_ffr <- as.data.frame(lapply(table_country_ffr, func))
 # Give name to the first element of the new data frame created above
 sumrow_ffr[1] <- "Total"
 # remove unwanted value
-sumrow_ffr[c(2, 3, 7)] <- NA
+sumrow_ffr[c(3, 7)] <- NA
 ```
 
 
@@ -310,7 +315,7 @@ sumrow_ffr[c(2, 3, 7)] <- NA
 options(knitr.kable.NA = '')
 
 bind_rows(table_country_ffr, sumrow_ffr) |> 
-  select(COUNTRY, pop_change, prop_end, length_river) |>
+  select(COUNTRY, change_label, prop_end, length_river) |>
 knitr::kable(col.names = c("Country", "Population change", 
                            "River length Endangered (prop)", 
                            "River length (km)") 
@@ -327,7 +332,8 @@ with the Araguaia-Tocantins Basin in Brazil. "Coastal North" covers
 the Guianas and includes the Essequibo Basin. "Coastal South" includes 
 part of Maranhão State in Brazil.
 ```{r totals-basin, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
-# Not used. Results from updated Norris et. al. 2019.
+# Not used. 
+# Results from updated Norris et. al. 2019.
 table_basin <- points_bau |> 
   group_by(BASIN_N) |> 
   mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
@@ -355,17 +361,22 @@ table_basin_ffr <- points_bau_ffr |>
   summarise(pop_start = sum(fem_t0), 
             pop_end = sum(fem_t42), 
             pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 3),
+            change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Lower"], 
+            change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Upper"],
             length_river = n(), 
             length_end = sum((flag_e))) |> 
     ungroup() |> 
     mutate(length_not_end = length_river - length_end, 
-           prop_end = round((length_end / length_river), 2)) |> 
-  select(BASIN_NAME, pop_change, prop_end, length_river, length_end, length_not_end)
+           prop_end = round((length_end / length_river), 2), 
+           change_label = paste(pop_change, " (", round(change_lcl_95, 2), " ", 
+                                "\u2013", " ", round(change_ucl_95, 2), ")", sep="")
+           ) |> 
+  select(BASIN_NAME, change_label, prop_end, length_river, length_end, length_not_end)
 ```
 
 ```{r make-table-basin-ffr, echo=FALSE}
 table_basin_ffr |> 
-  select(BASIN_NAME, pop_change, prop_end, length_river) |>
+  select(BASIN_NAME, change_label, prop_end, length_river) |>
 knitr::kable(col.names = c("Basin", "population change", 
                            "River length Endangered (prop)", 
                            "River length (km)")) 
@@ -407,7 +418,7 @@ tab_sum <- points_bau_ffr |>
   dplyr::group_by(COUNTRY, BASIN_NAME) |> 
   dplyr::summarise(pop_start = sum(fem_t0), 
                    pop_end = sum(fem_t42), 
-                   pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 3),
+                   pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 2),
                    diff_mean = mean(fem_diff_t42), 
                    change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Lower"], 
                    change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Upper"],
@@ -423,7 +434,10 @@ tab_sum <- points_bau_ffr |>
   dplyr::mutate(threat_status = case_when(diff_mean <= -0.8 ~ "Critically Endangered", 
                                    diff_mean <= -0.5 ~ "Endangered", 
                                    diff_mean <= -0.3 ~ "Vulnerable", 
-                                   diff_mean <= -0.2 ~ "Near Threatened")) 
+                                   diff_mean <= -0.2 ~ "Near Threatened"), 
+                change_label = paste(pop_change, " (", round(change_lcl_95, 2), " ", 
+                                "\u2013", " ", round(change_ucl_95, 2), ")", sep="")
+           ) 
 tab_sum$bc <- factor(paste(tab_sum$BASIN_NAME, tab_sum$COUNTRY, sep = "\n"))
 # levels(tab_sum$bc)
 
@@ -434,13 +448,13 @@ tab_sum$bc <- factor(paste(tab_sum$BASIN_NAME, tab_sum$COUNTRY, sep = "\n"))
 tab_sum |> 
   filter(length_river > 21) |> 
   droplevels() |>
-  select(BASIN_NAME, COUNTRY, pop_change, proportion_endangered, 
+  select(BASIN_NAME, COUNTRY, change_label, proportion_endangered, 
          length_river) |> 
   arrange(BASIN_NAME, COUNTRY) |>
 knitr::kable(col.names = c("Basin", "Country", "population change", 
                            "River length Endangered (prop)", 
                            "river length (km)")) |> 
-  kableExtra::column_spec(3:5, width = "3cm")
+  kableExtra::column_spec(4:5, width = "3cm")
              
 ```
 
