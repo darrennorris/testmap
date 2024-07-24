@@ -78,17 +78,19 @@ q25_value <- round(abs(pop_change_42_q25) * 100, 1)
 q75_value <- round(abs(pop_change_42_q75) * 100, 1)
 ```
 
-
 Use the interactive map below to check population changes. Zoom in to see 
 where *Podocnemis unilfilis* is Endangered based on IUCN Red List criteria - A3bd.
 
-This is an extension of [Norris et. al. 2019](https://doi.org/10.1016/j.biocon.2019.02.022) that includes:
+- Overall *Podocnemis unilfilis* is Endangered based on future population size reduction. 
+The adult female population is predicted to decline by `r change_value`%
+in the future (25 and 75% quantile range: `r q25_value` - `r q75_value` % decline).
+
+The analysis is developed here: https://github.com/darrennorris/TACAR, 
+and is an extension of [Norris et. al. 2019](https://doi.org/10.1016/j.biocon.2019.02.022) that includes:
 
 - Stochastic population projections. 
-- Future impacts to populations caused by human acessibility (hunting and habitat change) and actions that reduce river connectivity.
+- Future impacts to populations caused by human acessibility (hunting) and actions that reduce river connectivity.
 
-Overall the adult female population is predicted to decline by `r change_value`%
-in the future (25 and 75% quantiles: `r q25_value` - `r q75_value` % decline).
 
 ## Map
 Due to the number of points, the map can become slow to respond when you zoom in.
