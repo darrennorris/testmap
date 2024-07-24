@@ -82,7 +82,7 @@ Use the interactive map below to check population changes. Zoom in to see
 where *Podocnemis unifilis* is Endangered based on IUCN Red List criteria - A3bd.
 
 - Overall *Podocnemis unifilis* is Endangered based on future population 
-size reduction criteria. 
+size reduction criteria.    
 The adult female population is predicted to decline by `r change_value`%
 in the future (25 and 75% quantile range: `r q25_value` - `r q75_value` % decline).
 
