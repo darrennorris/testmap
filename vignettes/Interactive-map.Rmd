@@ -227,10 +227,17 @@ and is an extension of [Norris et. al. 2019](https://doi.org/10.1016/j.biocon.20
 
 
 ## Summaries
-A summary of the map results is presented below. This includes summaries 
+A summary of the map results is presented below. These include summaries 
 by country and major basin using the full set of points at 1 kilometer 
-intervals. Results include the size and extent of future
-population changes. The column "population change" is the difference in
+intervals. To date subpopulations have not been identified due to a lack of 
+comprehensive genetic analysis. Summaries by basin are provided as these 
+are expected to represent important management units for this predominantly 
+aquatic species. The implementation of conservation actions is regulated 
+at national levels so summaries are also provided by country.
+
+
+ - Results include the size and extent of future population changes.    
+ The column "population change" is the difference in
 the number of adult females after 3 generations (42 years). This is consistent 
 with the population sze reduction criteria used by the IUCN Red List. The 
 column "River length Endangered", is the proportion of river length where 
@@ -252,6 +259,7 @@ points_bau |>
 ```
 
 ### Summary by country.
+
 ```{r totals-country, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
 # Not used. Updated points from Norris et al. 2019.
 table_country <- points_bau |> 
@@ -322,7 +330,8 @@ bind_rows(table_country_ffr, sumrow_ffr) |>
   select(COUNTRY, change_label, prop_end, length_river) |>
 knitr::kable(col.names = c("Country", "Population change", 
                            "River length Endangered (prop)", 
-                           "River length (km)") 
+                           "River length (km)"), 
+             caption = "Table 1. Population changes by country."
              )|> 
   kableExtra::column_spec(3:4, width = "3.0cm")
              
@@ -445,6 +454,15 @@ tab_sum <- points_bau_ffr |>
 #tab_sum$bc <- factor(paste(tab_sum$BASIN_NAME, tab_sum$COUNTRY, sep = "\n"))
 # levels(tab_sum$bc)
 
+river_tot <- tab_sum |> 
+  filter(length_river > 21) |> 
+  droplevels() |> 
+  pull(length_river) |> sum() 
+river_amazon_brazil <-   tab_sum |>
+  filter(COUNTRY == "Brazil", BASIN_NAME == "Amazon") |> 
+  droplevels() |> 
+  pull(length_river) |> sum() 
+river_amazon_brazil_prop <- round(((river_amazon_brazil / river_tot) * 100), 1)
 ```
 
 
@@ -464,9 +482,9 @@ knitr::kable(col.names = c("Basin", "Country", "population change",
 
 
 The table values can also be presented graphically.
-This enables a more comprehensive understanding of the patterns.
+This enables a clearer understanding of the patterns.
 
-```{r fig-basin-country-ffr, fig.cap = "Population changes across basins and contries", echo=FALSE, message=FALSE, warning=FALSE}
+```{r fig-basin-country-ffr, fig.cap = "Figure 1. Population changes across basins and contries", echo=FALSE, message=FALSE, warning=FALSE}
 # Plot
 # Add width ajustment factor and fill colour to be consistent across graphs.
 mycountry <- sort(unique(tab_sum$COUNTRY))
@@ -537,11 +555,18 @@ fig_left + fig_right + plot_layout(widths = c(3, 1))
 ```
 
 The bars in the graph above show predicted population changes for each basin country combination.
-The background shading follows a gradient from Near Threatened (-0.2 is 20% loss) to 
-Critically Endangered (-0.8 is 80% loss). 
+The background shading follows a gradient from Near Threatened ("-0.2" is 20% loss) to 
+Critically Endangered ("-0.8" is 80% loss). 
 The width of the bars is proportional to the river length on a log scale. 
 The labels above each bar show river lengths in thousands of 
-kilometers (e.g. 22.2 is 22,200 kilometers).
+kilometers (e.g. "22.2" is 22,200 kilometers).
+
+The Amazon Basin in Brazil represents the largest proportion of 
+rivers (`r river_amazon_brazil_prop`%). Considering the spatial variation 
+in threats and genetics, it would probably be useful to 
+include the Amazon Basin seperated into major basins (Madeira, Negro, etc). 
+But the summaries presented here provide a general overview and enable 
+assessment of the results.
 
 ## Next steps
 
