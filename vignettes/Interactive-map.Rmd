@@ -558,18 +558,19 @@ fig_left + fig_right + plot_layout(widths = c(3, 1))
 ```
 
 The grey bars in the above figure show predicted population changes for each basin country combination.
-The background shading follows a gradient from Near Threatened ("-0.2" is 20% loss) to 
-Critically Endangered ("-0.8" is 80% loss). 
 The width of the bars is proportional to the river length on a log scale. 
 The labels above each bar show river lengths in thousands of 
 kilometers (e.g. "22.2" is 22,200 kilometers).
+The background shading follows a gradient from Near Threatened ("-0.2" is 20% loss) to 
+Critically Endangered ("-0.8" is 80% loss). 
 
 The Amazon Basin in Brazil represents the largest proportion of 
 rivers (`r river_amazon_brazil_prop`%). Considering the spatial variation 
 in threats and genetics, it would probably be useful to 
 include the Amazon Basin seperated into major basins (Madeira, Negro, etc). 
 But the summaries presented here provide a general overview and enable 
-assessment of the results.
+assessment of the results, and the overall patterns do not change if the 
+Amazon basin is seperated further.
 
 ## Next steps
 
