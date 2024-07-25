@@ -91,8 +91,8 @@ Due to the number of points, the map can become slow to respond when you zoom in
 Zoom out to a level showing fewer points and you can pan around the map 
 to find the area of interest. Then zoom in again to check the coloured points.
 
-If you find any errors (e.g. points where *Podocnemis unifilis* does not nest) 
-please raise an issue at: https://github.com/darrennorris/testmap/issues .
+If you find any errors (e.g. points where *Podocnemis unifilis* does not occur) 
+please raise an issue at: https://github.com/darrennorris/testmap/issues . 
 
 ```{r make-map-ffr, echo=FALSE, message=FALSE, warning=FALSE}
 points_bau4326 <- sf::st_as_sf(points_bau_ffr_map, crs = 3395) |> 
