@@ -392,7 +392,8 @@ table_basin_ffr |>
   select(BASIN_NAME, change_label, prop_end, length_river) |>
 knitr::kable(col.names = c("Basin", "population change", 
                            "River length Endangered (prop)", 
-                           "River length (km)")) 
+                           "River length (km)"), 
+             caption = "Table 2. Population changes by basin.") 
              
 ```
 
@@ -418,7 +419,8 @@ knitr::kable(table_basin_country,
              col.names = c("Basin", "Country", 
                            "Population change","Endangered (prop)", 
                            "river length (km)", 
-                           "length End.", "length not End.")) |> 
+                           "length End.", "length not End."), 
+             caption = "Table 3. Population changes by country and basin.") |> 
   kableExtra::column_spec(3:7, width = "3cm")
              
 ```
@@ -475,7 +477,8 @@ tab_sum |>
   arrange(BASIN_NAME, COUNTRY) |>
 knitr::kable(col.names = c("Basin", "Country", "population change", 
                            "River length Endangered (prop)", 
-                           "river length (km)")) |> 
+                           "river length (km)"), 
+             caption = "Table 3. Population changes by country and basin.") |> 
   kableExtra::column_spec(4:5, width = "3cm")
              
 ```
@@ -484,7 +487,7 @@ knitr::kable(col.names = c("Basin", "Country", "population change",
 The table values can also be presented graphically.
 This enables a clearer understanding of the patterns.
 
-```{r fig-basin-country-ffr, fig.cap = "Figure 1. Population changes across basins and contries", echo=FALSE, message=FALSE, warning=FALSE}
+```{r fig-basin-country-ffr, fig.cap = "Figure 1. Population changes across basins and contries.", echo=FALSE, message=FALSE, warning=FALSE}
 # Plot
 # Add width ajustment factor and fill colour to be consistent across graphs.
 mycountry <- sort(unique(tab_sum$COUNTRY))
@@ -554,7 +557,7 @@ fig_left + fig_right + plot_layout(widths = c(3, 1))
 
 ```
 
-The bars in the graph above show predicted population changes for each basin country combination.
+The grey bars in the above figure show predicted population changes for each basin country combination.
 The background shading follows a gradient from Near Threatened ("-0.2" is 20% loss) to 
 Critically Endangered ("-0.8" is 80% loss). 
 The width of the bars is proportional to the river length on a log scale. 
