@@ -44,19 +44,16 @@ library(patchwork)
 
 ```{r main-result, echo=FALSE}
 tot_t0 <- sum(points_bau_ffr$fem_t0)
-tot_t42 <- floor(sum(points_bau_ffr$fem_t42))
-pop_change_42 <- (tot_t42 - tot_t0) / tot_t0 
-change_value <- round(abs(pop_change_42) * 100, 1)
-diff_boot <- Hmisc::smean.cl.boot(points_bau_ffr$fem_diff_t42)
-pop_change_42_lcl <- diff_boot["Lower"]
-pop_change_42_ucl <- diff_boot["Upper"]
+tot_t35 <- floor(sum(points_bau_ffr$fem_t35))
+pop_change_35 <- (tot_t35 - tot_t0) / tot_t0 
+change_value <- round(abs(pop_change_35) * 100, 1)
+
 # quantile wont work as there are few distinct values.
-# hist(points_bau_ffr$fem_diff_t42)
-#pop_change_42_q25 <- quantile(points_bau_ffr$fem_diff_t42, probs =0.25)
-#pop_change_42_q75 <- quantile(points_bau_ffr$fem_diff_t42, probs =0.75)
+# hist(points_bau_ffr$fem_diff_t35)
+#pop_change_35_q25 <- quantile(points_bau_ffr$fem_diff_t35, probs =0.25)
+#pop_change_35_q75 <- quantile(points_bau_ffr$fem_diff_t35, probs =0.75)
 
 # Randomized resample to get quantile distribution.
-
 # Sample Function
 resample_and_calculate_change <- function(df, sample_percent, col1, col2) {
   # sample
@@ -71,11 +68,11 @@ resample_and_calculate_change <- function(df, sample_percent, col1, col2) {
 
 set.seed(123)  # For reproducibility
 results <- replicate(10000, resample_and_calculate_change(points_bau_ffr, 1, 
-                                                       "fem_t0", "fem_t42")) 
-pop_change_42_q25 <- quantile(results, probs =0.25)
-pop_change_42_q75 <- quantile(results, probs =0.75)
-q25_value <- round(abs(pop_change_42_q25) * 100, 1)
-q75_value <- round(abs(pop_change_42_q75) * 100, 1)
+                                                       "fem_t0", "fem_t35")) 
+pop_change_35_q25 <- quantile(results, probs =0.25)
+pop_change_35_q75 <- quantile(results, probs =0.75)
+q25_value <- round(abs(pop_change_35_q25) * 100, 1)
+q75_value <- round(abs(pop_change_35_q75) * 100, 1)
 ```
 
 Use the interactive map below to check population changes. Zoom in to see 
@@ -97,16 +94,16 @@ please raise an issue at: https://github.com/darrennorris/testmap/issues .
 ```{r make-map-ffr, echo=FALSE, message=FALSE, warning=FALSE}
 points_bau4326 <- sf::st_as_sf(points_bau_ffr_map, crs = 3395) |> 
   st_transform(4326) 
-levels(points_bau4326$flag_50_42y) <- c("No", "Yes")
+levels(points_bau4326$flag_50_35y) <- c("No", "Yes")
 points_bau4326_low <- points_bau4326
 # label to plot with circle
 points_bau4326_low$label <- paste("Prot = ", points_bau4326_low$Protected, 
                                   "Acc = ", points_bau4326_low$Accessible, 
-                                  "Free = ", points_bau4326_low$Free.flowing)
+                                  "Free = ", points_bau4326_low$Free_flowing)
 # colour palette
 leaf_pal <- colorFactor(
   palette = c("#7274C1", "#A3720E"), 
-  domain = points_bau4326$flag_50_42y
+  domain = points_bau4326$flag_50_35y
 )
 
 mypal <- c("#7274C1", "#A3720E")
@@ -117,17 +114,17 @@ leaflet::leaflet(points_bau4326_low,
   addTiles(options = tileOptions(
   updateWhenZooming = FALSE,      # map won't update tiles until zoom is done
   updateWhenIdle = TRUE)) |> 
-  addCircles(color = ~leaf_pal(flag_50_42y), 
+  addCircles(color = ~leaf_pal(flag_50_35y), 
              popup = ~htmlEscape(label),
              group = "points_bau4326_low"
 ) |>  
-  addCircleMarkers(color = ~leaf_pal(flag_50_42y), 
+  addCircleMarkers(color = ~leaf_pal(flag_50_35y), 
              stroke = FALSE, fillOpacity = 0.4, 
 clusterOptions = markerClusterOptions(), 
 group = "points_bau4326"
 ) |> 
   addLegend("bottomright", pal = leaf_pal, title="Endangered",
-            values = ~flag_50_42y,
+            values = ~flag_50_35y,
             group = "en_legend") |> 
   groupOptions("points_bau4326", zoomLevels = 1:7) |> 
   groupOptions("points_bau4326_low", zoomLevels = 8:15) |> 
@@ -142,7 +139,7 @@ remote sensing (Free-flowing Rivers, 2019: https://doi.org/10.1038/s41586-019-11
 To facilitate online viewing the mapped points are a subset at intervals 
 of approximately 10 kilometers.
 The points are brown where populations are predicted to decline by 50% 
-or more within 3 generations (42 years). Brown points therefore represent 
+or more within 3 generations (35 years). Brown points therefore represent 
 rivers where the species is Endangered, following the IUCN Red List 
 population size reduction criteria - A3bd (https://www.iucnredlist.org/about/faqs).
 
@@ -152,16 +149,16 @@ points_bau4326 <- points_bau |>
   #filter(BASIN_N == "Orinoco") |>
   arrange(BASIN_N, SUBBASI, BB_ID, REACH_ID) |> 
   filter(row_number() %% 5 == 1) |> st_as_sf(crs = 3395) |> st_transform(4326) 
-levels(points_bau4326$flag_50_42y) <- c("No", "Yes")
+levels(points_bau4326$flag_50_35y) <- c("No", "Yes")
 points_bau4326_low <- points_bau4326
 # label to plot with circle
 points_bau4326_low$label <- paste("Prot = ", points_bau4326_low$Protected, 
                                   "Acc = ", points_bau4326_low$Accessible, 
-                                  "Free = ", points_bau4326_low$Free.flowing)
+                                  "Free = ", points_bau4326_low$Free_flowing)
 # colour palette
 leaf_pal <- colorFactor(
   palette = c("#7274C1", "#A3720E"), 
-  domain = points_bau4326$flag_50_42y
+  domain = points_bau4326$flag_50_35y
 )
 
 mypal <- c("#7274C1", "#A3720E")
@@ -196,17 +193,17 @@ leaflet::leaflet(points_bau4326_low,
   addTiles(options = tileOptions(
   updateWhenZooming = FALSE,      # map won't update tiles until zoom is done
   updateWhenIdle = TRUE)) |> 
-  addCircles(color = ~leaf_pal(flag_50_42y), 
+  addCircles(color = ~leaf_pal(flag_50_35y), 
              popup = ~htmlEscape(label),
              group = "points_bau4326_low"
 ) |>  
-  addCircleMarkers(color = ~leaf_pal(flag_50_42y), 
+  addCircleMarkers(color = ~leaf_pal(flag_50_35y), 
              stroke = FALSE, fillOpacity = 0.4, 
 clusterOptions = markerClusterOptions(), 
 group = "points_bau4326"
 ) |> 
   addLegend("bottomright", pal = leaf_pal, title="Endangered",
-            values = ~flag_50_42y,
+            values = ~flag_50_35y,
             group = "en_legend") |> 
   groupOptions("points_bau4326", zoomLevels = 1:8) |> 
   groupOptions("points_bau4326_low", zoomLevels = 9:15) |> 
@@ -238,7 +235,7 @@ at national levels so summaries are also provided by country.
 
  - Results include the size and extent of future population changes.    
  The column "population change" is the difference in
-the number of adult females after 3 generations (42 years). This is consistent 
+the number of adult females after 3 generations (35 years). This is consistent 
 with the population sze reduction criteria used by the IUCN Red List. The 
 column "River length Endangered", is the proportion of river length where 
 populations declined by 50% or more, and represents the spatial extent of 
@@ -247,7 +244,7 @@ future changes.
 ```{r totals-access, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
 # Check length of free flowing by Accessibility.
 points_bau |> 
-  mutate(flag_ff = if_else(Free.flowing == "yes", 1, 0)) |>
+  mutate(flag_ff = if_else(Free_flowing == "yes", 1, 0)) |>
   group_by(Accessible) |> 
   summarise(length_river = n(), 
            length_ff = sum(flag_ff)) |> 
@@ -263,9 +260,9 @@ points_bau |>
 ```{r totals-country, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
 # Not used. Updated points from Norris et al. 2019.
 table_country <- points_bau |> 
-  mutate(flag_ff = if_else(Free.flowing == "yes", 1, 0)) |>
+  mutate(flag_ff = if_else(Free_flowing == "yes", 1, 0)) |>
   group_by(COUNTRY, Accessible) |> 
-  mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
+  mutate(flag_e = if_else(fem_diff_t35 <= -0.5, 1, 0)) |>
   summarise(length_river = n(), 
             length_end = sum((flag_e)), 
            length_ff = sum(flag_ff), 
@@ -292,12 +289,12 @@ sumrow[c(2, 3, 7)] <- NA
 ```{r totals-country-ffr, echo=FALSE, warning=FALSE, message=FALSE}
 # All FFR "yes". Need to revise and update.
 table_country_ffr <- points_bau_ffr |> 
-  mutate(flag_ff = if_else(Free.flowing == "yes", 1, 0)) |>
+  mutate(flag_ff = if_else(Free_flowing == "yes", 1, 0)) |>
   group_by(COUNTRY) |> 
-  mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
-  summarise(pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 2), 
-            change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Lower"], 
-            change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Upper"],
+  mutate(flag_e = if_else(fem_diff_t35 <= -0.5, 1, 0)) |>
+  summarise(pop_change = round(((sum(fem_t35) - sum(fem_t0)) / sum(fem_t0)), 2), 
+            change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Lower"], 
+            change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Upper"],
             length_river = n(), 
             length_end = sum((flag_e)), 
            length_ff = sum(flag_ff), 
@@ -349,8 +346,8 @@ part of Maranhão State in Brazil.
 # Results from updated Norris et. al. 2019.
 table_basin <- points_bau |> 
   group_by(BASIN_N) |> 
-  mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
-  summarise(pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 3), 
+  mutate(flag_e = if_else(fem_diff_t35 <= -0.5, 1, 0)) |>
+  summarise(pop_change = round(((sum(fem_t35) - sum(fem_t0)) / sum(fem_t0)), 3), 
             length_river = n(), 
             length_end = sum((flag_e))) |> 
     ungroup() |> 
@@ -370,12 +367,12 @@ knitr::kable(table_basin,
 ```{r totals-basin-ffr, echo=FALSE, message=FALSE, warning=FALSE}
 table_basin_ffr <- points_bau_ffr |> 
   group_by(BASIN_NAME) |> 
-  mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
+  mutate(flag_e = if_else(fem_diff_t35 <= -0.5, 1, 0)) |>
   summarise(pop_start = sum(fem_t0), 
-            pop_end = sum(fem_t42), 
-            pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 3),
-            change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Lower"], 
-            change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Upper"],
+            pop_end = sum(fem_t35), 
+            pop_change = round(((sum(fem_t35) - sum(fem_t0)) / sum(fem_t0)), 3),
+            change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Lower"], 
+            change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Upper"],
             length_river = n(), 
             length_end = sum((flag_e))) |> 
     ungroup() |> 
@@ -403,8 +400,8 @@ knitr::kable(col.names = c("Basin", "population change",
 # Not used.
 table_basin_country <- points_bau |> 
   group_by(BASIN_N, COUNTRY) |> 
-  mutate(flag_e = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
-  summarise(pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 3), 
+  mutate(flag_e = if_else(fem_diff_t35 <= -0.5, 1, 0)) |>
+  summarise(pop_change = round(((sum(fem_t35) - sum(fem_t0)) / sum(fem_t0)), 3), 
             length_river = n(), 
             length_end = sum((flag_e))) |> 
     ungroup() |> 
@@ -429,17 +426,17 @@ knitr::kable(table_basin_country,
 ```{r data-basin-country-ffr, echo=FALSE, message=FALSE, warning=FALSE}
 # Make summaries
 tab_sum <- points_bau_ffr |> 
-  dplyr::mutate(flag_EN = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
+  dplyr::mutate(flag_EN = if_else(fem_diff_t35 <= -0.5, 1, 0)) |>
   dplyr::group_by(COUNTRY, BASIN_NAME) |> 
   dplyr::summarise(pop_start = sum(fem_t0), 
-                   pop_end = sum(fem_t42), 
-                   pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 2),
-                   diff_mean = mean(fem_diff_t42), 
-                   change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Lower"], 
-                   change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Upper"],
-                   diff_median = median(fem_diff_t42),
-                   diff_q25 = quantile(fem_diff_t42, probs = 0.25), 
-                   diff_q75 = quantile(fem_diff_t42, probs = 0.75),
+                   pop_end = sum(fem_t35), 
+                   pop_change = round(((sum(fem_t35) - sum(fem_t0)) / sum(fem_t0)), 2),
+                   diff_mean = mean(fem_diff_t35), 
+                   change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Lower"], 
+                   change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Upper"],
+                   diff_median = median(fem_diff_t35),
+                   diff_q25 = quantile(fem_diff_t35, probs = 0.25), 
+                   diff_q75 = quantile(fem_diff_t35, probs = 0.75),
                    length_river = n(), 
                    length_endangered = sum((flag_EN))) |>
   dplyr::ungroup() |> 

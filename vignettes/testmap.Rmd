@@ -34,12 +34,12 @@ points_bau4326 <- points_bau_ffr_map |>
   dplyr::filter(COUNTRY == "French Guiana") |> # country
   sf::st_as_sf(crs = 3395) |> 
   sf::st_transform(4326) 
-levels(points_bau4326$flag_50_42y) <- c("No", "Yes")
+levels(points_bau4326$flag_50_35y) <- c("No", "Yes")
 
 # colour palette
 leaf_pal <- colorFactor(
   palette = c("#7274C1", "#A3720E"), 
-  domain = points_bau4326$flag_50_42y
+  domain = points_bau4326$flag_50_35y
 )
 
 # interactive map. Options added to make panning smoother....
@@ -50,17 +50,17 @@ leaflet::leaflet(points_bau4326,
   updateWhenZooming = FALSE,      # map won't update tiles until zoom is done
   updateWhenIdle = TRUE)) |> 
 # Circles when zoom in.
-  addCircles(color = ~leaf_pal(flag_50_42y), 
+  addCircles(color = ~leaf_pal(flag_50_35y), 
              group = "points_bau4326_low"
 ) |>  
 # Markers with cluster options for smoother panning.
-  addCircleMarkers(color = ~leaf_pal(flag_50_42y), 
+  addCircleMarkers(color = ~leaf_pal(flag_50_35y), 
              stroke = FALSE, fillOpacity = 0.4, 
 clusterOptions = markerClusterOptions(), 
 group = "points_bau4326"
 ) |> 
   addLegend("bottomright", pal = leaf_pal, title="Endangered",
-            values = ~flag_50_42y,
+            values = ~flag_50_35y,
             group = "en_legend") |> 
   groupOptions("points_bau4326", zoomLevels = 1:6) |> 
   groupOptions("points_bau4326_low", zoomLevels = 7:15) |> 

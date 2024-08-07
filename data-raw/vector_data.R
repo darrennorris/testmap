@@ -24,19 +24,24 @@ points_bau <- points_bau |> data.frame()
 usethis::use_data(points_bau, overwrite = TRUE)
 
 # .rds with Free-flowing river points made by TACAR https://github.com/darrennorris/TACAR
+# made by test_datajoin.Rmd
 mypath <- "yourpathhere"
 mypath <- "C:\\Users\\user\\Documents\\Articles\\2024_Norris_Greenstatus\\TACAR\\inst\\other\\scenario_res_ffr1a5.rds"
 # points
 inpoints <- readRDS(mypath)
+# apply cieling threshold
+nf <- 10
+ceiling_threshold <- nf + (nf * 0.2)
 # keep only columns needed for plotting
 points_bau_ffr <- inpoints |>
   filter(model_name == "modelkey_BAU") |>
-  mutate(flag_50_42y = factor(if_else(fem_diff_t42 <= -0.5, 1, 0))) |>
+  mutate(flag_50_35y = factor(if_else(fem_diff_t35 <= -0.5, 1, 0))) |>
   select(BASIN_NAME, subbasin, SUBBASIN_FLAG,
          BAS_NAME, COUNTRY, RIV_ORD, BB_ID, BB_NAME, REACH_ID,
-         Protected, Accessible, Free.flowing,
-         fem_t0, fem_t42, fem_diff_t42, flag_50_42y,
+         Protected, Protected_cat, Accessible, Free_flowing,
+         fem_t0, fem_t35, fem_diff_t35, flag_50_35y,
          geom) |>
+  mutate(fem_t35 = ifelse(fem_t35 > ceiling_threshold, ceiling_threshold, fem_t35)) |>
   sf::st_as_sf()
 sf::st_crs(points_bau_ffr) <- NA
 points_bau_ffr <- points_bau_ffr |> data.frame()
