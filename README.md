@@ -33,7 +33,7 @@ Summaries of the results including maps of the projected future changes
 can be found online.
 
 - 3 generation.  
-  Predicted changes after 42 years:
+  Predicted changes after 35 years:
   <https://darrennorris.github.io/testmap/articles/Interactive-map.html>
 
 ## Installation
@@ -62,13 +62,13 @@ library(dplyr)
 
 ## Summary by country.
 points_bau_ffr |> 
-  dplyr::mutate(flag_EN = if_else(fem_diff_t42 <= -0.5, 1, 0)) |>
+  dplyr::mutate(flag_EN = if_else(fem_diff_t35 <= -0.5, 1, 0)) |>
   dplyr::group_by(COUNTRY) |> 
   dplyr::summarise(pop_start = sum(fem_t0), 
-                   pop_end = sum(fem_t42), 
-                   pop_change = round(((sum(fem_t42) - sum(fem_t0)) / sum(fem_t0)), 3),
-                   change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Lower"], 
-                   change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t42)["Upper"],
+                   pop_end = sum(fem_t35), 
+                   pop_change = round(((sum(fem_t35) - sum(fem_t0)) / sum(fem_t0)), 3),
+                   change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Lower"], 
+                   change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Upper"],
                    length_river = n(), 
                    length_endangered = sum((flag_EN))) |>
   dplyr::ungroup() |> 
@@ -80,15 +80,15 @@ points_bau_ffr |>
 #> # A tibble: 9 × 10
 #>   COUNTRY  pop_start pop_end pop_change change_lcl_95 change_ucl_95 length_river
 #>   <chr>        <dbl>   <dbl>      <dbl>         <dbl>         <dbl>        <int>
-#> 1 Bolivia     222170  94300.     -0.576        -0.584        -0.567        22217
-#> 2 Brazil     1905550 712133.     -0.626        -0.629        -0.624       190555
-#> 3 Colombia    385520 199290.     -0.483        -0.490        -0.477        38552
-#> 4 Ecuador      83020  18194.     -0.781        -0.790        -0.771         8302
-#> 5 French …     32980  17147.     -0.48         -0.503        -0.457         3298
-#> 6 Guyana       73720  55397.     -0.249        -0.264        -0.234         7372
-#> 7 Peru        473630 149614.     -0.684        -0.689        -0.679        47363
-#> 8 Suriname     57560  42552.     -0.261        -0.279        -0.244         5756
-#> 9 Venezue…    300220 185219.     -0.383        -0.390        -0.376        30022
+#> 1 Bolivia     222170 103830.     -0.533        -0.498        -0.484        22217
+#> 2 Brazil     1905550 934926.     -0.509        -0.475        -0.471       190555
+#> 3 Colombia    385520 204235.     -0.47         -0.424        -0.412        38552
+#> 4 Ecuador      83020  25106.     -0.698        -0.685        -0.667         8302
+#> 5 French …     32980  18580.     -0.437        -0.404        -0.367         3298
+#> 6 Guyana       73720  52144.     -0.293        -0.229        -0.203         7372
+#> 7 Peru        473630 173911.     -0.633        -0.606        -0.597        47363
+#> 8 Suriname     57560  40255.     -0.301        -0.240        -0.210         5756
+#> 9 Venezue…    300220 188560.     -0.372        -0.316        -0.304        30022
 #> # ℹ 3 more variables: length_endangered <dbl>, proportion_endangered <dbl>,
 #> #   threat_status <chr>
 ```
