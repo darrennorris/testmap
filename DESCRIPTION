@@ -15,6 +15,7 @@ Suggests:
     leaflet, 
     leafem, 
     htmltools,
+    plyr,
     dplyr, 
     ggplot2, 
     patchwork, 

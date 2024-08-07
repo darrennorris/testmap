@@ -30,6 +30,7 @@ library(testmap)
 
 
 ```{r load-packages, echo=FALSE, message=FALSE, warning=FALSE}
+library(plyr)
 library(dplyr)
 library(ggplot2)
 library(leaflet)
@@ -55,10 +56,17 @@ change_value <- round(abs(pop_change_35) * 100, 1)
 
 # Randomized resample to get quantile distribution.
 # Sample Function
-resample_and_calculate_change <- function(df, sample_percent, col1, col2) {
+resample_and_calculate_change <- function(df, sample_percent = NA, 
+                                          sample_size = NA, 
+                                          col1, col2) {
   # sample
-  sampled_df <- points_bau_ffr |> 
-    dplyr::slice_sample(prop = (sample_percent / 100))
+  if(!is.na(sample_size)){ 
+    sampled_df <- df |> 
+    dplyr::slice_sample(n = sample_size, replace = TRUE) 
+    }else{
+  sampled_df <- df |> 
+    dplyr::slice_sample(prop = (sample_percent / 100)) 
+    }
   # calculate change
   tot_tstart <- sum(sampled_df[ , col1]) 
   tot_tend <- floor(sum(sampled_df[ , col2])) 
@@ -67,8 +75,8 @@ resample_and_calculate_change <- function(df, sample_percent, col1, col2) {
 }
 
 set.seed(123)  # For reproducibility
-results <- replicate(10000, resample_and_calculate_change(points_bau_ffr, 1, 
-                                                       "fem_t0", "fem_t35")) 
+results <- replicate(10000, resample_and_calculate_change(df = points_bau_ffr, sample_size = 1000, 
+                                                      col1 = "fem_t0", col2 = "fem_t35")) 
 pop_change_35_q25 <- quantile(results, probs =0.25)
 pop_change_35_q75 <- quantile(results, probs =0.75)
 q25_value <- round(abs(pop_change_35_q25) * 100, 1)
@@ -217,7 +225,7 @@ group = "points_bau4326"
 
 ## Methods
 The analysis is developed here: https://github.com/darrennorris/TACAR, 
-and is an extension of [Norris et. al. 2019](https://doi.org/10.1016/j.biocon.2019.02.022) that includes:
+The methods used are an extension of [Norris et. al. 2019](https://doi.org/10.1016/j.biocon.2019.02.022) that includes:
 
 - Stochastic population projections. 
 - Future impacts to populations caused by human acessibility (hunting) and actions that reduce river connectivity.
@@ -285,26 +293,44 @@ sumrow[1] <- "Total"
 sumrow[c(2, 3, 7)] <- NA
 ```
 
+```{r sample-wrapper, echo=FALSE, warning=FALSE, message=FALSE}
+# wrapper to so can use sample function with plyr::ddply
+wrap_sample <- function(x){ 
+results <- replicate(1000, resample_and_calculate_change(df = x, sample_size = 1000, 
+                                                      col1 = "fem_t0", col2 = "fem_t35")) 
+pop_change_35_q25 <- quantile(results, probs =0.25)
+pop_change_35_q75 <- quantile(results, probs =0.75)
+
+dfout <- data.frame(q25_value = round(pop_change_35_q25, 3), 
+           q75_value = round(pop_change_35_q75, 3))
+return(dfout)
+  }
+```
+
 
 ```{r totals-country-ffr, echo=FALSE, warning=FALSE, message=FALSE}
 # All FFR "yes". Need to revise and update.
+# interquartile range
+df_quartile <- plyr::ddply(points_bau_ffr, c("COUNTRY"), .fun = wrap_sample)
+# other summaries
 table_country_ffr <- points_bau_ffr |> 
   mutate(flag_ff = if_else(Free_flowing == "yes", 1, 0)) |>
   group_by(COUNTRY) |> 
   mutate(flag_e = if_else(fem_diff_t35 <= -0.5, 1, 0)) |>
   summarise(pop_change = round(((sum(fem_t35) - sum(fem_t0)) / sum(fem_t0)), 2), 
-            change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Lower"], 
-            change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Upper"],
+            #change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Lower"], 
+            #change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Upper"],
             length_river = n(), 
             length_end = sum((flag_e)), 
            length_ff = sum(flag_ff), 
            prop_ff = round((sum(flag_ff) / length_river), 2)) |> 
     ungroup() |> 
+  left_join(df_quartile) |>
     mutate(length_not_end = length_river - length_end, 
            prop_end = round((length_end / length_river), 2), 
            length_not_ff = length_river - length_ff, 
-           change_label = paste(pop_change, " (", round(change_lcl_95, 2), " ", 
-                                "\u2013", " ", round(change_ucl_95, 2), ")", sep="")
+           change_label = paste(pop_change, " (", round(q25_value, 2), " ", 
+                                "\u2013", " ", round(q75_value, 2), ")", sep="")
            
 ) |> 
   select(COUNTRY, change_label, prop_end, length_river, length_end, length_not_end, 
@@ -317,6 +343,7 @@ sumrow_ffr <- as.data.frame(lapply(table_country_ffr, func))
 sumrow_ffr[1] <- "Total"
 # remove unwanted value
 sumrow_ffr[c(3, 7)] <- NA
+
 ```
 
 
@@ -357,6 +384,7 @@ table_basin <- points_bau |>
 ```
 
 ```{r make-table-basin, echo=FALSE, eval=FALSE}
+# not used
 knitr::kable(table_basin, 
              col.names = c("Basin", "Population change", "Endangered (prop)","river length (km)", 
                            "length End.", "length not End.")) 
@@ -365,21 +393,25 @@ knitr::kable(table_basin,
 
 
 ```{r totals-basin-ffr, echo=FALSE, message=FALSE, warning=FALSE}
+# interquartile range
+df_quartile_b <- plyr::ddply(points_bau_ffr, c("BASIN_NAME"), .fun = wrap_sample)
+
 table_basin_ffr <- points_bau_ffr |> 
   group_by(BASIN_NAME) |> 
   mutate(flag_e = if_else(fem_diff_t35 <= -0.5, 1, 0)) |>
   summarise(pop_start = sum(fem_t0), 
             pop_end = sum(fem_t35), 
             pop_change = round(((sum(fem_t35) - sum(fem_t0)) / sum(fem_t0)), 3),
-            change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Lower"], 
-            change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Upper"],
+            #change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Lower"], 
+            #change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Upper"],
             length_river = n(), 
             length_end = sum((flag_e))) |> 
     ungroup() |> 
+  left_join(df_quartile_b) |>
     mutate(length_not_end = length_river - length_end, 
            prop_end = round((length_end / length_river), 2), 
-           change_label = paste(pop_change, " (", round(change_lcl_95, 2), " ", 
-                                "\u2013", " ", round(change_ucl_95, 2), ")", sep="")
+           change_label = paste(pop_change, " (", round(q25_value, 2), " ", 
+                                "\u2013", " ", round(q75_value, 2), ")", sep="")
            ) |> 
   select(BASIN_NAME, change_label, prop_end, length_river, length_end, length_not_end)
 ```
