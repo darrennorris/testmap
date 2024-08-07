@@ -54,6 +54,12 @@ change_value <- round(abs(pop_change_35) * 100, 1)
 #pop_change_35_q25 <- quantile(points_bau_ffr$fem_diff_t35, probs =0.25)
 #pop_change_35_q75 <- quantile(points_bau_ffr$fem_diff_t35, probs =0.75)
 
+# 100 years
+tot_t100 <- floor(sum(points_bau_ffr$fem_t100))
+pop_change_100 <- (tot_t100 - tot_t0) / tot_t0 
+change_value_100 <- round(abs(pop_change_100) * 100, 1)
+
+
 # Randomized resample to get quantile distribution.
 # Sample Function
 resample_and_calculate_change <- function(df, sample_percent = NA, 
@@ -74,13 +80,24 @@ resample_and_calculate_change <- function(df, sample_percent = NA,
   return(pop_change)
 }
 
+# 3 generations - 35 year is shortest (25 percentile of matrix model mother to cohort ages).
 set.seed(123)  # For reproducibility
-results <- replicate(10000, resample_and_calculate_change(df = points_bau_ffr, sample_size = 1000, 
+results_35 <- replicate(10000, resample_and_calculate_change(df = points_bau_ffr, sample_size = 1000, 
                                                       col1 = "fem_t0", col2 = "fem_t35")) 
-pop_change_35_q25 <- quantile(results, probs =0.25)
-pop_change_35_q75 <- quantile(results, probs =0.75)
-q25_value <- round(abs(pop_change_35_q25) * 100, 1)
-q75_value <- round(abs(pop_change_35_q75) * 100, 1)
+pop_change_35_q25 <- quantile(results_35, probs =0.25)
+pop_change_35_q75 <- quantile(results_35, probs =0.75)
+q25_t35 <- round(abs(pop_change_35_q25) * 100, 1)
+q75_t35 <- round(abs(pop_change_35_q75) * 100, 1)
+
+# 100 years
+results_100 <- replicate(10000, resample_and_calculate_change(df = points_bau_ffr, 
+                                                              sample_size = 1000, 
+                                                      col1 = "fem_t0", col2 = "fem_t100")) 
+pop_change_100_q25 <- quantile(results_100, probs =0.25)
+pop_change_100_q75 <- quantile(results_100, probs =0.75)
+q25_t100 <- round(abs(pop_change_100_q25) * 100, 1)
+q75_t100 <- round(abs(pop_change_100_q75) * 100, 1)
+
 ```
 
 Use the interactive map below to check population changes. Zoom in to see 
@@ -88,8 +105,10 @@ where *Podocnemis unifilis* is Endangered based on IUCN Red List criteria - A3bd
 
 - Overall *Podocnemis unifilis* is Endangered based on future population 
 size reduction criteria.    
-The adult female population is predicted to decline by `r change_value`%
-in the future (25 and 75% quantile range: `r q25_value` - `r q75_value` % decline).
+Within 3 generations (35 years) the adult female population is predicted 
+to decline by `r change_value`% in the future (25 and 75% quantile 
+range: `r q25_t35` - `r q75_t35` % decline). Within 100 years the adult 
+female population is predicted to decline by `r change_value_100`%.
 
 ## Map
 Due to the number of points, the map can become slow to respond when you zoom in.
@@ -151,8 +170,12 @@ or more within 3 generations (35 years). Brown points therefore represent
 rivers where the species is Endangered, following the IUCN Red List 
 population size reduction criteria - A3bd (https://www.iucnredlist.org/about/faqs).
 
+The points represent rivers where *Podocnemis unifilis* females are 
+likely to nest and that are likely to be accessible to people by boat. 
+
 ```{r make-map-norris, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
-#Map below uses the river points from Norris et. al. 2019.
+# NOT USED.
+# Map below uses the river points from Norris et. al. 2019.
 points_bau4326 <- points_bau |> 
   #filter(BASIN_N == "Orinoco") |>
   arrange(BASIN_N, SUBBASI, BB_ID, REACH_ID) |> 

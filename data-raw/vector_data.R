@@ -39,9 +39,10 @@ points_bau_ffr <- inpoints |>
   select(BASIN_NAME, subbasin, SUBBASIN_FLAG,
          BAS_NAME, COUNTRY, RIV_ORD, BB_ID, BB_NAME, REACH_ID,
          Protected, Protected_cat, Accessible, Free_flowing,
-         fem_t0, fem_t35, fem_diff_t35, flag_50_35y,
+         fem_t0, fem_t35, fem_t100, fem_diff_t35, flag_50_35y,
          geom) |>
-  mutate(fem_t35 = ifelse(fem_t35 > ceiling_threshold, ceiling_threshold, fem_t35)) |>
+  mutate(fem_t35 = ifelse(fem_t35 > ceiling_threshold, ceiling_threshold, fem_t35),
+         fem_t100 = ifelse(fem_t100 > ceiling_threshold, ceiling_threshold, fem_t100)) |>
   sf::st_as_sf()
 sf::st_crs(points_bau_ffr) <- NA
 points_bau_ffr <- points_bau_ffr |> data.frame()
