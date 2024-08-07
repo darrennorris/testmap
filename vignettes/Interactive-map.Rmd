@@ -244,7 +244,7 @@ at national levels so summaries are also provided by country.
  - Results include the size and extent of future population changes.    
  The column "population change" is the difference in
 the number of adult females after 3 generations (35 years). This is consistent 
-with the population sze reduction criteria used by the IUCN Red List. The 
+with the population size reduction criteria used by the IUCN Red List. The 
 column "River length Endangered", is the proportion of river length where 
 populations declined by 50% or more, and represents the spatial extent of 
 future changes. 
@@ -444,6 +444,7 @@ table_basin_country <- points_bau |>
 ```
 
 ```{r make-table-basin-country, echo=FALSE, eval=FALSE}
+# Not used.
 knitr::kable(table_basin_country, 
              col.names = c("Basin", "Country", 
                            "Population change","Endangered (prop)", 
@@ -457,6 +458,9 @@ knitr::kable(table_basin_country,
 
 ```{r data-basin-country-ffr, echo=FALSE, message=FALSE, warning=FALSE}
 # Make summaries
+# interquartile range
+df_quartile_cb <- plyr::ddply(points_bau_ffr, c("COUNTRY", "BASIN_NAME"), .fun = wrap_sample)
+# other summaries
 tab_sum <- points_bau_ffr |> 
   dplyr::mutate(flag_EN = if_else(fem_diff_t35 <= -0.5, 1, 0)) |>
   dplyr::group_by(COUNTRY, BASIN_NAME) |> 
@@ -464,14 +468,15 @@ tab_sum <- points_bau_ffr |>
                    pop_end = sum(fem_t35), 
                    pop_change = round(((sum(fem_t35) - sum(fem_t0)) / sum(fem_t0)), 2),
                    diff_mean = mean(fem_diff_t35), 
-                   change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Lower"], 
-                   change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Upper"],
+                   #change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Lower"], 
+                   #change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Upper"],
                    diff_median = median(fem_diff_t35),
                    diff_q25 = quantile(fem_diff_t35, probs = 0.25), 
                    diff_q75 = quantile(fem_diff_t35, probs = 0.75),
                    length_river = n(), 
                    length_endangered = sum((flag_EN))) |>
   dplyr::ungroup() |> 
+  left_join(df_quartile_cb) |>
   dplyr::mutate(proportion_endangered = round((length_endangered / length_river), 2), 
                 length_label = round((length_river / 1000), 1)
                 ) |> 
@@ -479,8 +484,8 @@ tab_sum <- points_bau_ffr |>
                                    diff_mean <= -0.5 ~ "Endangered", 
                                    diff_mean <= -0.3 ~ "Vulnerable", 
                                    diff_mean <= -0.2 ~ "Near Threatened"), 
-                change_label = paste(pop_change, " (", round(change_lcl_95, 2), " ", 
-                                "\u2013", " ", round(change_ucl_95, 2), ")", sep="")
+                change_label = paste(pop_change, " (", round(q25_value, 2), " ", 
+                                "\u2013", " ", round(q75_value, 2), ")", sep="")
            ) 
 #tab_sum$bc <- factor(paste(tab_sum$BASIN_NAME, tab_sum$COUNTRY, sep = "\n"))
 # levels(tab_sum$bc)
@@ -549,7 +554,7 @@ ggplot(aes(x = COUNTRY, y = pop_change, width = (.85 * river_fac)*width_fac)) +
             fill="#A3720E", geom = 'rect', alpha=0.4) + 
   geom_hline(yintercept = 0, colour = "black") +
   geom_col(aes(fill = my_fill)) + 
-  geom_errorbar(aes(ymax = change_ucl_95, ymin = change_lcl_95), 
+  geom_errorbar(aes(ymax = q75_value, ymin = q25_value), 
                 width = 0.2) + 
   geom_label(aes(x = COUNTRY, y = 0.2, label = length_label)) +
   scale_fill_identity() +  
@@ -572,7 +577,7 @@ ggplot(aes(x = COUNTRY, y = pop_change, width = (.85 * river_fac)*(width_fac*3))
             fill="#A3720E", geom = 'rect', alpha=0.4) + 
   geom_hline(yintercept = 0, colour = "black") +
   geom_col(aes(fill = my_fill)) + 
-  geom_errorbar(aes(ymax = change_ucl_95, ymin = change_lcl_95), 
+  geom_errorbar(aes(ymax = q75_value, ymin = q25_value), 
                 width = 0.2) + 
   geom_label(aes(x = COUNTRY, y = 0.2, label = length_label)) + 
   scale_fill_identity() + 
