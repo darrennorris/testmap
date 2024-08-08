@@ -67,8 +67,6 @@ points_bau_ffr |>
   dplyr::summarise(pop_start = sum(fem_t0), 
                    pop_end = sum(fem_t35), 
                    pop_change = round(((sum(fem_t35) - sum(fem_t0)) / sum(fem_t0)), 3),
-                   change_lcl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Lower"], 
-                   change_ucl_95 = Hmisc::smean.cl.boot(fem_diff_t35)["Upper"],
                    length_river = n(), 
                    length_endangered = sum((flag_EN))) |>
   dplyr::ungroup() |> 
@@ -77,20 +75,19 @@ points_bau_ffr |>
                                    pop_change <= -0.5 ~ "Endangered", 
                                    pop_change <= -0.3 ~ "Vulnerable", 
                                    pop_change <= -0.2 ~ "Near Threatened"))
-#> # A tibble: 9 × 10
-#>   COUNTRY  pop_start pop_end pop_change change_lcl_95 change_ucl_95 length_river
-#>   <chr>        <dbl>   <dbl>      <dbl>         <dbl>         <dbl>        <int>
-#> 1 Bolivia     222170 103830.     -0.533        -0.498        -0.484        22217
-#> 2 Brazil     1905550 934926.     -0.509        -0.475        -0.471       190555
-#> 3 Colombia    385520 204235.     -0.47         -0.424        -0.412        38552
-#> 4 Ecuador      83020  25106.     -0.698        -0.685        -0.667         8302
-#> 5 French …     32980  18580.     -0.437        -0.404        -0.367         3298
-#> 6 Guyana       73720  52144.     -0.293        -0.229        -0.203         7372
-#> 7 Peru        473630 173911.     -0.633        -0.606        -0.597        47363
-#> 8 Suriname     57560  40255.     -0.301        -0.240        -0.210         5756
-#> 9 Venezue…    300220 188560.     -0.372        -0.316        -0.304        30022
-#> # ℹ 3 more variables: length_endangered <dbl>, proportion_endangered <dbl>,
-#> #   threat_status <chr>
+#> # A tibble: 9 × 8
+#>   COUNTRY       pop_start pop_end pop_change length_river length_endangered
+#>   <chr>             <dbl>   <dbl>      <dbl>        <int>             <dbl>
+#> 1 Bolivia          222170 103830.     -0.533        22217             15505
+#> 2 Brazil          1905550 934926.     -0.509       190555            115489
+#> 3 Colombia         385520 204235.     -0.47         38552             23628
+#> 4 Ecuador           83020  25106.     -0.698         8302              7066
+#> 5 French Guiana     32980  18580.     -0.437         3298              2048
+#> 6 Guyana            73720  52144.     -0.293         7372              3263
+#> 7 Peru             473630 173911.     -0.633        47363             36693
+#> 8 Suriname          57560  40255.     -0.301         5756              2643
+#> 9 Venezuela        300220 188560.     -0.372        30022             16714
+#> # ℹ 2 more variables: proportion_endangered <dbl>, threat_status <chr>
 ```
 
 Package developed and built using the following guides:
