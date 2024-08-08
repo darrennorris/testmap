@@ -162,18 +162,20 @@ group = "points_bau4326"
   
 ```
 
-When you zoom in you will see shaded points. The points follow rivers produced by
-remote sensing (Free-flowing Rivers, 2019: https://doi.org/10.1038/s41586-019-1111-9). 
-To facilitate online viewing the mapped points are a subset at intervals 
-of approximately 10 kilometers.
-The points are brown where populations are predicted to decline by 50% 
+ - When you zoom in you will see shaded points.    
+ The points are brown where populations are predicted to decline by 50% 
 or more within 3 generations (35 years). Brown points therefore represent 
 rivers where the species is Endangered ("Em perigo" / "En peligro"), 
 following the IUCN Red List population size reduction criteria - A3bd 
 (https://www.iucnredlist.org/about/faqs).
 
-The points are locations along rivers where *Podocnemis unifilis* females 
-are likely to nest and that are likely to be accessible to people by boat. 
+ - The points follow rivers mapped by remote sensing. 
+This standardized global scale mapping comes from 
+Grill et al 2019, Free-flowing Rivers: https://doi.org/10.1038/s41586-019-1111-9. 
+The points are locations along rivers selected to represent where 
+*Podocnemis unifilis* females are likely to nest and that are likely 
+to be accessible to people by boat. To facilitate online viewing the mapped 
+points are a subset at intervals of approximately 10 kilometers.
 
 ```{r make-map-norris, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE}
 # NOT USED.
@@ -261,9 +263,9 @@ A summary of the map results is presented below. These include summaries
 by country and major basin using the full set of points at 1 kilometer 
 intervals. To date subpopulations have not been identified due to a lack of 
 comprehensive genetic analysis. Summaries by basin are provided as these 
-are expected to represent important management units for this predominantly 
-aquatic species. The implementation of conservation actions is regulated 
-at national levels so summaries are also provided by country.
+are expected to represent important conservation management units for this 
+predominantly aquatic species. The implementation of conservation actions 
+is regulated at national levels so summaries are also provided by country.
 
 
  - Results include the size and extent of future population changes.    
