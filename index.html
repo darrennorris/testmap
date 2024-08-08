@@ -103,8 +103,6 @@ Another example showing where <em>Podocnemis unifilis</em> is Endangered is here
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>pop_start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">fem_t0</span><span class="op">)</span>, </span>
 <span>                   pop_end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">fem_t35</span><span class="op">)</span>, </span>
 <span>                   pop_change <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="op">(</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">fem_t35</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">fem_t0</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">fem_t0</span><span class="op">)</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span>                   change_lcl_95 <span class="op">=</span> <span class="fu">Hmisc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Hmisc/man/smean.sd.html" class="external-link">smean.cl.boot</a></span><span class="op">(</span><span class="va">fem_diff_t35</span><span class="op">)</span><span class="op">[</span><span class="st">"Lower"</span><span class="op">]</span>, </span>
-<span>                   change_ucl_95 <span class="op">=</span> <span class="fu">Hmisc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Hmisc/man/smean.sd.html" class="external-link">smean.cl.boot</a></span><span class="op">(</span><span class="va">fem_diff_t35</span><span class="op">)</span><span class="op">[</span><span class="st">"Upper"</span><span class="op">]</span>,</span>
 <span>                   length_river <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, </span>
 <span>                   length_endangered <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">flag_EN</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -113,20 +111,19 @@ Another example showing where <em>Podocnemis unifilis</em> is Endangered is here
 <span>                                   <span class="va">pop_change</span> <span class="op">&lt;=</span> <span class="op">-</span><span class="fl">0.5</span> <span class="op">~</span> <span class="st">"Endangered"</span>, </span>
 <span>                                   <span class="va">pop_change</span> <span class="op">&lt;=</span> <span class="op">-</span><span class="fl">0.3</span> <span class="op">~</span> <span class="st">"Vulnerable"</span>, </span>
 <span>                                   <span class="va">pop_change</span> <span class="op">&lt;=</span> <span class="op">-</span><span class="fl">0.2</span> <span class="op">~</span> <span class="st">"Near Threatened"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 9 × 10</span></span>
-<span><span class="co">#&gt;   COUNTRY  pop_start pop_end pop_change change_lcl_95 change_ucl_95 length_river</span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;        &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1 Bolivia     222170 103830.     -0.533        -0.498        -0.484        22217</span></span>
-<span><span class="co">#&gt; 2 Brazil     1905550 934926.     -0.509        -0.475        -0.471       190555</span></span>
-<span><span class="co">#&gt; 3 Colombia    385520 204235.     -0.47         -0.424        -0.412        38552</span></span>
-<span><span class="co">#&gt; 4 Ecuador      83020  25106.     -0.698        -0.685        -0.667         8302</span></span>
-<span><span class="co">#&gt; 5 French …     32980  18580.     -0.437        -0.404        -0.367         3298</span></span>
-<span><span class="co">#&gt; 6 Guyana       73720  52144.     -0.293        -0.229        -0.203         7372</span></span>
-<span><span class="co">#&gt; 7 Peru        473630 173911.     -0.633        -0.606        -0.597        47363</span></span>
-<span><span class="co">#&gt; 8 Suriname     57560  40255.     -0.301        -0.240        -0.210         5756</span></span>
-<span><span class="co">#&gt; 9 Venezue…    300220 188560.     -0.372        -0.316        -0.304        30022</span></span>
-<span><span class="co">#&gt; # ℹ 3 more variables: length_endangered &lt;dbl&gt;, proportion_endangered &lt;dbl&gt;,</span></span>
-<span><span class="co">#&gt; #   threat_status &lt;chr&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; # A tibble: 9 × 8</span></span>
+<span><span class="co">#&gt;   COUNTRY       pop_start pop_end pop_change length_river length_endangered</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;             &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;        &lt;int&gt;             &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 Bolivia          222170 103830.     -0.533        22217             15505</span></span>
+<span><span class="co">#&gt; 2 Brazil          1905550 934926.     -0.509       190555            115489</span></span>
+<span><span class="co">#&gt; 3 Colombia         385520 204235.     -0.47         38552             23628</span></span>
+<span><span class="co">#&gt; 4 Ecuador           83020  25106.     -0.698         8302              7066</span></span>
+<span><span class="co">#&gt; 5 French Guiana     32980  18580.     -0.437         3298              2048</span></span>
+<span><span class="co">#&gt; 6 Guyana            73720  52144.     -0.293         7372              3263</span></span>
+<span><span class="co">#&gt; 7 Peru             473630 173911.     -0.633        47363             36693</span></span>
+<span><span class="co">#&gt; 8 Suriname          57560  40255.     -0.301         5756              2643</span></span>
+<span><span class="co">#&gt; 9 Venezuela        300220 188560.     -0.372        30022             16714</span></span>
+<span><span class="co">#&gt; # ℹ 2 more variables: proportion_endangered &lt;dbl&gt;, threat_status &lt;chr&gt;</span></span></code></pre></div>
 <p>Package developed and built using the following guides:</p>
 <ul>
 <li><p>Fan Wang: <a href="https://fanwangecon.github.io/PkgTestR/articles/ffv_pkgdown_github.html" class="external-link uri">https://fanwangecon.github.io/PkgTestR/articles/ffv_pkgdown_github.html</a> and</p></li>
