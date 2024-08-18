@@ -14,6 +14,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+<!-- badges: start -->
+[![Lifecycle: superseded](https://img.shields.io/badge/lifecycle-superseded-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#superseded)
+<!-- badges: end -->
+
 <!-- Google Translate widget -->
 <div id="google_translate_element" style="float: right;"></div>
 <script type="text/javascript">
@@ -24,7 +28,7 @@ function googleTranslateElementInit() {
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 
-** testmap has moved to TACAR. Please check the newest advances here:
+**testmap has moved to TACAR. Please check the newest advances here:
 https://github.com/darrennorris/TACAR .**
 
 

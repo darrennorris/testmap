@@ -6,13 +6,13 @@
 <!-- badges: start -->
 
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+superseded](https://img.shields.io/badge/lifecycle-superseded-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html#superseded)
 [![pkgdown](https://github.com/darrennorris/testmap/workflows/pkgdown/badge.svg)](https://github.com/darrennorris/eprdados/actions)
 [![R-CMD-check](https://github.com/darrennorris/testmap/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/darrennorris/testmap/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-\*\* testmap has moved to TACAR. Please check the newest advances here:
-<https://github.com/darrennorris/TACAR> .\*\*
+**testmap has moved to TACAR. Please check the newest advances here:
+<https://github.com/darrennorris/TACAR> .**
 
 The goal of testmap is to map future population changes of the
 Yellow-spotted river turtle (*Podocnemis unifilis*).
