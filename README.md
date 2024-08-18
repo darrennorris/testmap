@@ -11,6 +11,9 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![R-CMD-check](https://github.com/darrennorris/testmap/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/darrennorris/testmap/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
+\*\* testmap has moved to TACAR. Please check the newest advances here:
+<https://github.com/darrennorris/TACAR> .\*\*
+
 The goal of testmap is to map future population changes of the
 Yellow-spotted river turtle (*Podocnemis unifilis*).
 
